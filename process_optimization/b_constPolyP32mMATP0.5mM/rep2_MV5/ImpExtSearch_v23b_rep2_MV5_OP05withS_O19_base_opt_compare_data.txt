@@ -1,0 +1,16 @@
+enzyme_init :         enzyme  baseline  optimized
+E_GLMU  E_GLMU      0.10   0.033578
+E_NAHK  E_NAHK      0.10   0.052779
+E_PPA    E_PPA      0.03   0.010969
+E_PPK3  E_PPK3      0.10   0.079370
+E_UDK    E_UDK      0.10   0.050397
+E_UMPK  E_UMPK      0.10   0.025829
+gram_enzyme_loads : {'baseline': 0.5299999936400001, 'optimized': 0.25292229561833107}
+substrates_init :        substrate  baseline  optimized
+GalNAc    GalNAc      50.0  46.486335
+Uri          Uri      50.0  51.409825
+ATP          ATP       0.5   0.500000
+titers_abs : {'baseline': np.float64(24.516728683199997), 'optimized': np.float64(21.09955067528531)}
+titers_rel : {'baseline': np.float64(46.25797920264291), 'optimized': np.float64(83.42305538427225)}
+yields_abs : {'baseline': np.float64(2.1071080280354955), 'optimized': np.float64(1.8477969068658808)}
+yields_rel : {'baseline': np.float64(3.975675572303381), 'optimized': np.float64(7.305788927577478)}

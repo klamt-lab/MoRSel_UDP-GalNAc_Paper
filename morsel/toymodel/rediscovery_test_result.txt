@@ -1,0 +1,14 @@
+
+best_ranking_model_variant_idx:
+2
+
+best_ranking_model_variant_structure:
+    base  term1
+r1     1      6
+r2     0      0
+r3     0      0
+r4     1      0
+
+best_param_set:
+     Unnamed: 0  (r1).k_MAforward  (r1).k_MAreverse  (r1).ki_X  (r4).k_MAforward  (r4).k_MAreverse       obj
+147         147          1.100076          1.099632   0.871536          1.047149          1.047889  0.000054
