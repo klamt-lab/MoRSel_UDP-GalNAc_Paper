@@ -410,66 +410,59 @@ def create_boxplots_and_heatmaps(model_variant_name, opt_variant_name, path_to_f
     # set working directory to the provided path so that result files are found and generated figures are saved to the correct directory
     os.chdir(path_to_files)
 
-    # 1) Repeated Optimization
-    # ------------------------
-
     # show horizontal grid lines
     sns.set_theme(style='whitegrid')
 
-    # OP01withS_7h
-    visualize_opt_results(f'{model_variant_name}_PartSwarm50x_OP01withS_7h', opt_variant_name)
-    plt.close()
+    if opt_variant_name == 'a':
 
-    # OP01withS_12h
-    visualize_opt_results(f'{model_variant_name}_PartSwarm50x_OP01withS_12h', opt_variant_name)
-    plt.close()
+        # 1) Repeated Optimization
+        # ------------------------
 
-    # OP05withS
-    visualize_opt_results(f'{model_variant_name}_PartSwarm50x_OP05withS', opt_variant_name)
-    plt.close()
+        # OP01withS_7h
+        visualize_opt_results(f'{model_variant_name}_PartSwarm50x_OP01withS_7h', opt_variant_name)
+        plt.close()
 
+        # 2) Cross-Validation
+        # -------------------
 
-    # 2) Cross-Validation
-    # -------------------
+        # OP01withS_7h
+        # load results
+        with open(f'{model_variant_name}_PartSwarm50x_OP01withS_7h_CrossVal.pkl', 'rb') as file:
+            cross_val_result_OP01withS_7h = pickle.load(file)
+        with open(f'{model_variant_name}_PartSwarm50x_OP01withS_7h_CrossVal_Scoring_Result_full.pkl', 'rb') as file:
+            scoring_result_OP01withS_7h = pickle.load(file)
+        # visualize results (titers heatmap and scores bar plot; highlight best scoring result)
+        visualize_OP01_cross_val_tables(cross_val_result_OP01withS_7h, scoring_result_OP01withS_7h,
+                                        f'{model_variant_name}_PartSwarm50x_OP01withS_7h_{opt_variant_name}_CrossVal_heatmap.png')
+        plt.close()
 
-    # OP01withS_7h
-    # load results
-    with open(f'{model_variant_name}_PartSwarm50x_OP01withS_7h_CrossVal.pkl', 'rb') as file:
-        cross_val_result_OP01withS_7h = pickle.load(file)
-    with open(f'{model_variant_name}_PartSwarm50x_OP01withS_7h_CrossVal_Scoring_Result_full.pkl', 'rb') as file:
-        scoring_result_OP01withS_7h = pickle.load(file)
-    # visualize results (titers heatmap and scores bar plot; highlight best scoring result)
-    visualize_OP01_cross_val_tables(cross_val_result_OP01withS_7h, scoring_result_OP01withS_7h,
-                                    f'{model_variant_name}_PartSwarm50x_OP01withS_7h_{opt_variant_name}_CrossVal_heatmap.png')
-    plt.close()
+    if opt_variant_name == 'b':
 
-    # OP01withS_12h
-    # load results
-    with open(f'{model_variant_name}_PartSwarm50x_OP01withS_12h_CrossVal.pkl', 'rb') as file:
-        cross_val_result_OP01withS_12h = pickle.load(file)
-    with open(f'{model_variant_name}_PartSwarm50x_OP01withS_12h_CrossVal_Scoring_Result_full.pkl', 'rb') as file:
-        scoring_result_OP01withS_12h = pickle.load(file)
-    # visualize results (titers heatmap and scores bar plot; highlight best scoring result)
-    visualize_OP01_cross_val_tables(cross_val_result_OP01withS_12h, scoring_result_OP01withS_12h,
-                                    f'{model_variant_name}_PartSwarm50x_OP01withS_12h_{opt_variant_name}_CrossVal_heatmap.png')
-    plt.close()
+        # 1) Repeated Optimization
+        # ------------------------
 
-    # OP05withS
-    # load results
-    with open(f'{model_variant_name}_PartSwarm50x_OP05withS_CrossVal_allEtot.pkl', 'rb') as file:
-        cross_val_result_OP05withS_allEtot = pickle.load(file)
-    with open(f'{model_variant_name}_PartSwarm50x_OP05withS_CrossVal_allTit.pkl', 'rb') as file:
-        cross_val_result_OP05withS_allTit = pickle.load(file)
-    with open(f'{model_variant_name}_PartSwarm50x_OP05withS_CrossVal_allYields.pkl', 'rb') as file:
-        cross_val_result_OP05withS_allYields = pickle.load(file)
-    with open(f'{model_variant_name}_PartSwarm50x_OP05withS_CrossVal_Scoring_Result_full.pkl', 'rb') as file:
-        scoring_result_OP05withS = pickle.load(file)
-    # visualize results (E_tot bar plot, titers heatmap, yields heatmap and scores bar plot; highlight best scoring result)
-    visualize_OP05withS_cross_val_tables(cross_val_result_OP05withS_allEtot, cross_val_result_OP05withS_allTit,
-                                         cross_val_result_OP05withS_allYields, scoring_result_OP05withS,
-                                         f'{model_variant_name}_PartSwarm50x_OP05withS_{opt_variant_name}_CrossVal_heatmaps.png')
-    plt.close()
+        # OP05withS
+        visualize_opt_results(f'{model_variant_name}_PartSwarm50x_OP05withS', opt_variant_name)
+        plt.close()
 
+        # 2) Cross-Validation
+        # -------------------
+
+        # OP05withS
+        # load results
+        with open(f'{model_variant_name}_PartSwarm50x_OP05withS_CrossVal_allEtot.pkl', 'rb') as file:
+            cross_val_result_OP05withS_allEtot = pickle.load(file)
+        with open(f'{model_variant_name}_PartSwarm50x_OP05withS_CrossVal_allTit.pkl', 'rb') as file:
+            cross_val_result_OP05withS_allTit = pickle.load(file)
+        with open(f'{model_variant_name}_PartSwarm50x_OP05withS_CrossVal_allYields.pkl', 'rb') as file:
+            cross_val_result_OP05withS_allYields = pickle.load(file)
+        with open(f'{model_variant_name}_PartSwarm50x_OP05withS_CrossVal_Scoring_Result_full.pkl', 'rb') as file:
+            scoring_result_OP05withS = pickle.load(file)
+        # visualize results (E_tot bar plot, titers heatmap, yields heatmap and scores bar plot; highlight best scoring result)
+        visualize_OP05withS_cross_val_tables(cross_val_result_OP05withS_allEtot, cross_val_result_OP05withS_allTit,
+                                             cross_val_result_OP05withS_allYields, scoring_result_OP05withS,
+                                             f'{model_variant_name}_PartSwarm50x_OP05withS_{opt_variant_name}_CrossVal_heatmaps.png')
+        plt.close()
 
 # create boxplots and heatmaps of the results of both optimization variants (each for the selected model variant)
 
