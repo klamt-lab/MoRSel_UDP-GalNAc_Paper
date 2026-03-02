@@ -11,9 +11,9 @@ from func_lib import *
 
 # ------------------------------------------------------------------------------------------------------ #
 
-# NEGATIVE CONTROL VARIANT PARAMETER ENSEMBLE
-# -------------------------------------------
-# Idea: as all methods in this script file are fundamentally based on testing the inclusion of various model modifications (e.g., regulation terms) it is necessary to first establish a baseline as a negative control: it only includes reactions that are part of the cascade design (and implements them with basic convenience kinetics rate laws without any extra modifications and/or regulations)
+# Initial Core Model Parameter Ensemble
+# -------------------------------------
+# Idea: As all methods in this script file are fundamentally based on testing the inclusion of various candidate model changes (also referred to as 'variable terms'), it is necessary to first establish (and parameterize) a baseline as a negative control: the initial core model.
 # define negative control baseline variant
 # set model name
 model_variant_name = 'v23brep1NegControl_Exp36.37.39'
@@ -61,16 +61,18 @@ if os.path.isfile(f"{model_variant_name}_{n_runs}runs_evaluated_vars_log") == Fa
 
 # ------------------------------------------------------------------------------------------------------ #
 
-# IMPROVED EXTENSION SEARCH
-# -------------------------
-# Idea: similar to reduction search but with two differences:
+# MoRSel Modification Loop
+# ------------------------
+# Idea: Identify the best combination of candidate model changes (also referred to as 'variable terms') to include in the initial core model (also referred to as 'negative control') in order to find the modified model that best describes the data (assuming that the initial core model was not able to describe the data very well). The old name of this method that still shows up in some comments was "improved extension search" because it is a greedy search strategy with the following features:
+#
 #       (1) 'extension', meaning that the search starts with the negative control and then always adds the 
 #                        best terms instead of removing them (to identify a solution that is as sparse as 
 #                        possible) and
+#
 #       (2) 'improved',  meaning that the estimated model parameters of the best replicate of the term 
 #                        that is selected for permanent addition are saved and used as the starting 
 #                        parameters of the estimations in the next iteration of the overall search (this 
-#                        creates an upper bound for the RSS making sure that the squared errors don't get 
+#                        creates an upper bound for the RSS, making sure that the squared errors don't get 
 #                        worse in larger models compared to smaller ones since any fit that is found for 
 #                        a smaller model also needs to be possible in a larger model)
 
