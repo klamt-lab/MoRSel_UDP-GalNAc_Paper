@@ -1,7 +1,7 @@
-# Combining Kinetic Model Selection and Robust Optimization Strategies to Maximize Production of UDP-GalNAc in a Cell-free Batch Process
+# Combining Automated Kinetic Model Selection with Robust Optimization and Application to Maximize Cell-free Production of UDP-GalNAc
 
 ## Introduction
-This is the code and data repository of the paper X. The implementation and application of *MoRSel*, the **Mo**del **R**efinement and **Sel**ection method that we introduce in this work, can be found in the [eponymous directory](/morsel). The files of the robust ensemble-based process optimization can be found in the [process optimization directory](/process_optimization).
+This repository contains all code and experimental data used to generate the results presented in [Huber et al., 2026](#publication). The implementation and application of *MoRSel*, the **Mo**del **R**efinement and **Sel**ection method that we introduce and apply in this work, can be found in the [eponymous directory](/morsel). All files of the robust ensemble-based process optimization can be found in the [process optimization directory](/process_optimization).
 
 <details>
 
@@ -122,7 +122,7 @@ Only time-resolved data can be used with entries being separated by tabs. Column
 
 <details>
 
-<summary>Example Data Format</summary>
+<summary>Example Data</summary>
 
 | Time | \[P\] | \[S\] | \[X\] | \[P\]\_0 | \[S\]\_0 | \[X\]\_0 |
 | ---- | ----- | ----  | ----- | -------- | -------- | -------- |
