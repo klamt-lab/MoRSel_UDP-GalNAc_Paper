@@ -142,7 +142,7 @@ First, the structure of the model variant needs to be defined. This is done by c
 
 </details>
 
-Then, the experimental data is loaded and the least-squares parameter estimation is computed following the logic of the *create_parameter_ensemble* function defined in the [function library](/morsel/func_lib.py).
+Then, the experimental data is loaded and the least-squares parameter estimation is computed following the logic of the *create_parameter_ensemble* function defined in the [function library](/morsel/func_lib.py). Alternatively, the start and boundary values of some or all parameters to be estimated can be set manually in a dictionary that is then passed to the *create_parameter_ensemble* function.
 
 <details>
 
@@ -168,9 +168,14 @@ model_var = pd.DataFrame(np.array(model_var).reshape(4, 1),
 exp_data_file_names = ['path/to/data.txt']
 exp_data_dataframes = [pd.read_csv(file_name, sep='\t') for file_name in exp_data_file_names]
 
-# repeat the evaluation of the same model variant 10 times and store the results
+# example of an optional dictionary providing a specific parameter estimation setup which contains start values, upper and lower boundaries of selected parameters to be estimated - the start and boundary values of all remaining parameters that are not defined here are set according to the logic implemented in the eval_struct_var function called by create_parameter_ensemble (this is the case for all parameters if this dictionary is not supplied); the syntax of the parameter keys is '(reaction_name).parameter_name'
+PE_setup = {'(r1).k_MAforward': {'start': 0.01, 'lower' 1e-2:, 'upper': 10},
+            '(r3).k_MAforward': {'start': 0.5, 'lower': 0.13, 'upper': 1e1},
+            '(r3).k_MAreverse': {'start': 1.9, 'lower': 1.75, 'upper': 2.1}}
+
+# repeat the evaluation of the same model variant 10 times and store the results; the start and boundary values of three selected parameters are defined according to the dictionary that is provided, the rest are defined according to the internal logic of eval_struct_var called by create_parameter_ensemble
 n_runs = 10
-evaluated_vars_log = create_parameter_ensemble(model_var, n_runs, exp_data_file_names, exp_data_dataframes, model_name, 
+evaluated_vars_log = create_parameter_ensemble(model_var, n_runs, exp_data_file_names, exp_data_dataframes, model_name, fit_params_info=PE_setup,
                                                model_data=toymodel_data, term_libs=toymodel_term_libs)
 ```
 

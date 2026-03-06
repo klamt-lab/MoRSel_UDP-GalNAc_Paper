@@ -45,7 +45,6 @@ def UDP_GalNAc_model_data():
     """
 
     # define reaction schemes; all of them are set even if a reaction is disabled in the structural variant matrix (in this case the underlying rate law is set to 0); the schemes are used as default and are modified according to the variable terms set in the structural variant matrix; modifiers that are not used in the selected rate law are inactive
-    ## v23: add P to products of ADP_Decay_v1
     reaction_scheme_dict = {'ADP_Decay_v1': 'ADP -> AMP + P',
                             'ADP_Decay_v2': 'ADP + ADP -> ATP + AMP',
                             'GLMU': 'GalNAc1P + UTP = UDP_GalNAc + PP;  E_GLMU',
@@ -63,9 +62,7 @@ def UDP_GalNAc_model_data():
                             'UMPK_ADP': 'UMP + ADP = UDP + AMP;  E_UMPK ATPP ATP',
                             'UMPK_ATPP': 'UMP + ATPP = UDP + ATP;  E_UMPK ADP AMP'}
 
-    # collect known literature values of kinetic parameters; not all parameters have to appear here - some may not be used depending on the kinetics that are selected according to the structural variant matrix; kcat [1/h]; Km, ki, ka [mM]; K_eq [-]
-    ## v20c: remove all lit. data except known Keq values of the main _ATP variants
-    ## v23b: add NAHK literature information (as no experimental data points are available for NAHK substrates and products so we need some information for the fit)
+    # collect known literature values of kinetic parameters; not all parameters have to appear here - some may not be used depending on the kinetics that are selected according to the structural variant matrix; kcat [1/h]; Km, ki, ka [mM]; K_eq [-]; these literature values are used in the eval_struct_var function to automatically define the fit items (if no fit_params_info dictionary with a specific parameter estimation setup is provided instead)
     param_dict = {'ADP_Decay_v1': {},
                   'ADP_Decay_v2': {},
                   'GLMU': {'K_eq_GLMU': 210},               # [eQuilibrator; pH 9; pMg=-log10(0.120)=0.9]
@@ -283,7 +280,7 @@ def toymodel_data():
                             'r3': 'P = X',
                             'r4': 'S + P = X'}
 
-    # collect known literature values of kinetic parameters; not all parameters have to appear here - some may not be used depending on the kinetics that are selected according to the structural variant matrix; kcat [1/h]; Km, ki, ka [mM]; K_eq [-]
+    # collect known literature values of kinetic parameters; not all parameters have to appear here - some may not be used depending on the kinetics that are selected according to the structural variant matrix; kcat [1/h]; Km, ki, ka [mM]; K_eq [-]; these literature values are used in the eval_struct_var function to automatically define the fit items (if no fit_params_info dictionary with a specific parameter estimation setup is provided instead)
     param_dict = {'r1': {},
                   'r2': {},
                   'r3': {},
@@ -942,7 +939,6 @@ def eval_struct_var(struct_var, exp_data_file_names, exp_data_dataframes, fit_pa
     # get only those reaction parameters that are not mapped to an already existing one, i.e., the set of unique reaction parameters
     reaction_params = get_reaction_parameters(model=model_object)
     reaction_params_unique = reaction_params.loc[reaction_params['mapped_to'] == '']
-    ## v23b: change the way parameter boundaries are generated for kcat, K_eq, and Km (make it more realistic and stick closer to a literature value if it is available)
     # generate fit parameters object (list of dictionaries; [{'name': str, 'lower': float, 'upper': float}, ...]); start and boundary values are generated according to several criteria (parameter type, substrate, availability of literature values)
     fit_items = list()
     for i in range(len(reaction_params_unique.index)):
