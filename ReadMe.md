@@ -66,16 +66,25 @@ Defines and returns (1) a dictionary that for each reaction contains all possibl
 ```python
 def toymodel_term_libs():
 
-    # two different rate laws were defined for each reaction: a zero rate law at index 0 (so that the reaction can be turned off) and a mass action rate law at index 1
+    # two different rate laws were defined for each reaction: a zero rate law at index 0 (so that the reaction can be turned off)
+    # and a mass action rate law at index 1
     base_kinetics = {
-        'r1': [{'equation': '0', 'mapping': {}}, #0
-               {'equation': '(k_MAforward*S-k_MAreverse*P)', 'mapping': {'k_MAforward': 'parameter', 'k_MAreverse': 'parameter', 'S': 'substrate', 'P': 'product'}}], #1
-        'r2': [{'equation': '0', 'mapping': {}}, #0
-               {'equation': '(k_MAforward*S-k_MAreverse*X)', 'mapping': {'k_MAforward': 'parameter', 'k_MAreverse': 'parameter', 'S': 'substrate', 'X': 'product'}}], #1
-        'r3': [{'equation': '0', 'mapping': {}}, #0
-               {'equation': '(k_MAforward*P-k_MAreverse*X)', 'mapping': {'k_MAforward': 'parameter', 'k_MAreverse': 'parameter', 'P': 'substrate', 'X': 'product'}}],  #1
-        'r4': [{'equation': '0', 'mapping': {}}, #0
-               {'equation': '(k_MAforward*S*P-k_MAreverse*X)', 'mapping': {'k_MAforward': 'parameter', 'k_MAreverse': 'parameter', 'S': 'substrate', 'P': 'substrate', 'X': 'product'}}], #1
+        'r1': [{'equation': '0', 
+                'mapping': {}},
+               {'equation': '(k_MAforward*S-k_MAreverse*P)', 
+                'mapping': {'k_MAforward': 'parameter', 'k_MAreverse': 'parameter', 'S': 'substrate', 'P': 'product'}}],
+        'r2': [{'equation': '0', 
+                'mapping': {}},
+               {'equation': '(k_MAforward*S-k_MAreverse*X)', 
+                'mapping': {'k_MAforward': 'parameter', 'k_MAreverse': 'parameter', 'S': 'substrate', 'X': 'product'}}],
+        'r3': [{'equation': '0', 
+                'mapping': {}},
+               {'equation': '(k_MAforward*P-k_MAreverse*X)', 
+                'mapping': {'k_MAforward': 'parameter', 'k_MAreverse': 'parameter', 'P': 'substrate', 'X': 'product'}}],
+        'r4': [{'equation': '0', 
+                'mapping': {}},
+               {'equation': '(k_MAforward*S*P-k_MAreverse*X)', 
+                'mapping': {'k_MAforward': 'parameter', 'k_MAreverse': 'parameter', 'S': 'substrate', 'P': 'substrate', 'X': 'product'}}]
     }
 
     # the list of multiplicative terms covers all possible allosteric inhibitions and activations
@@ -168,15 +177,23 @@ model_var = pd.DataFrame(np.array(model_var).reshape(4, 1),
 exp_data_file_names = ['path/to/data.txt']
 exp_data_dataframes = [pd.read_csv(file_name, sep='\t') for file_name in exp_data_file_names]
 
-# example of an optional dictionary providing a specific parameter estimation setup which contains start values, upper and lower boundaries of selected parameters to be estimated - the start and boundary values of all remaining parameters that are not defined here are set according to the logic implemented in the eval_struct_var function called by create_parameter_ensemble (this is the case for all parameters if this dictionary is not supplied); the syntax of the parameter keys is '(reaction_name).parameter_name'
+# example of an optional dictionary providing a specific parameter estimation setup which contains 
+# start values, upper and lower boundaries of selected parameters to be estimated - the start and 
+# boundary values of all remaining parameters that are not defined here are set according to the 
+# logic implemented in the eval_struct_var function called by create_parameter_ensemble (this is 
+# the case for all parameters if this dictionary is not supplied); the syntax of the parameter keys 
+# is '(reaction_name).parameter_name'
 PE_setup = {'(r1).k_MAforward': {'start': 0.01, 'lower' 1e-2:, 'upper': 10},
             '(r3).k_MAforward': {'start': 0.5, 'lower': 0.13, 'upper': 1e1},
             '(r3).k_MAreverse': {'start': 1.9, 'lower': 1.75, 'upper': 2.1}}
 
-# repeat the evaluation of the same model variant 10 times and store the results; the start and boundary values of three selected parameters are defined according to the dictionary that is provided, the rest are defined according to the internal logic of eval_struct_var called by create_parameter_ensemble
+# repeat the evaluation of the same model variant 10 times and store the results; the start and 
+# boundary values of three selected parameters are defined according to the dictionary that is 
+# provided, the rest are defined according to the internal logic of eval_struct_var called by 
+# the function create_parameter_ensemble
 n_runs = 10
-evaluated_vars_log = create_parameter_ensemble(model_var, n_runs, exp_data_file_names, exp_data_dataframes, model_name, fit_params_info=PE_setup,
-                                               model_data=toymodel_data, term_libs=toymodel_term_libs)
+evaluated_vars_log = create_parameter_ensemble(model_var, n_runs, exp_data_file_names, exp_data_dataframes, model_name,
+                                               fit_params_info=PE_setup, model_data=toymodel_data, term_libs=toymodel_term_libs)
 ```
 
 </details>
@@ -201,7 +218,10 @@ start_var = pd.DataFrame(np.array(start_var).reshape(4, 2),
                          columns=['base', 'term1'],
                          index=['r1', 'r2', 'r3', 'r4'])
 
-# define list of candidate model changes (the first two elements of each tuple are the row and column coordinates pointing to elements in the start variant data frame and the third element is the index of the selected kinetic rate law or multiplicative term) - also: tuples are placed inside inner lists because combinations of multiple tuples are also valid candidate model changes
+# define list of candidate model changes (the first two elements of each tuple are the row and 
+# column coordinates pointing to elements in the start variant data frame and the third element 
+# is the index of the selected kinetic rate law or multiplicative term) - also: tuples are placed
+# inside inner lists because combinations of multiple tuples are also valid candidate model changes
 vari_terms = [[(1,0,1)],  # r2.on
               [(2,0,1)],  # r3.on
               [(3,0,1)],  # r4.on
@@ -222,7 +242,8 @@ neg_ctrl_log = pickle.load(reading_file)
 reading_file.close()
 start_var_ensemble = neg_ctrl_log
 
-# run the MoRSel model refinement and selection loop (here referred to by its old name as "improved extension search")
+# run the MoRSel model refinement and selection loop
+# (here referred to by its old name as "improved extension search")
 output_dict = improved_extension_search(start_var, vari_terms,
                                         exp_data_file_names, exp_data_dataframes,
                                         PE_algorithm_info=PE_algorithm_info,
@@ -270,14 +291,16 @@ elif best_median_rank_model_idx > best_mean_rank_model_idx:
     print(f"Model variant {best_mean_rank_model_idx} with best mean rank {analysis_result['fitness_dataframe'].iloc[best_mean_rank_model_idx, :]['mean_rank']} was selected.")
     selected_idx = best_mean_rank_model_idx
 elif best_median_rank_model_idx == best_mean_rank_model_idx:
-    # both indices are the same so they both point to the same model variant -> therefore it doesn't matter which one is used to look it up in the ImpExtSearch result
+    # both indices are the same so they both point to the same model variant 
+    # -> therefore it doesn't matter which one is used to look it up in the ImpExtSearch result
     best_ranking_var_log_dict = output_dict['evaluated_vars_log'][best_median_rank_model_idx]
     print(f"Model variant {best_median_rank_model_idx} with best median rank {analysis_result['fitness_dataframe'].iloc[best_median_rank_model_idx, :]['median_rank']} and best mean rank {analysis_result['fitness_dataframe'].iloc[best_mean_rank_model_idx, :]['mean_rank']} was selected.")
     selected_idx = best_median_rank_model_idx
 
 # create parameter ensemble of the selected model variant 
 model_variant_name = 'selected_model_variant_name'
-evaluated_vars_log = create_parameter_ensemble(best_ranking_var_log_dict['variant'], n_runs, exp_data_file_names, exp_data_dataframes, model_variant_name,
+evaluated_vars_log = create_parameter_ensemble(best_ranking_var_log_dict['variant'], n_runs, 
+                                               exp_data_file_names, exp_data_dataframes, model_variant_name,
                                                fit_params_info=fit_params_info, model_data=toymodel_data, term_libs=toymodel_term_libs)
 
 # get best parameter set of the ensemble
