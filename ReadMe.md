@@ -28,7 +28,7 @@ All code was developed using Python version 3.12.2 as well as the following pack
 The [*MoRSel* function library](/morsel/func_lib.py) contains the definitions of all necessary functions grouped by type. In the first section, the model-specific functions are defined. Two different models are already implemented: the UDP-GalNAc model and the toymodel. Each is represented by two functions: *\<model-name\>_data* and *\<model-name\>_term_libs*. In order to add a new model, both of these functions need to be defined.
 
 #### *\<model-name\>_data* function
-Defines and returns dictionaries with the following information: (1) stoichiometry of all model reactions (using [Copasi syntax](https://copasi.org/Support/User_Manual/Model_Creation/Reactions/)), (2) any known values of kinetic model parameters, and (3) initial substrate concentrations. The latter are set as placeholder values to fallback on if the model is simulated without specifying any initial conditions.
+Defines and returns dictionaries with the following information: (1) stoichiometry of all model reactions (using [Copasi syntax](https://copasi.org/Support/User_Manual/Model_Creation/Reactions/)), (2) any known values of kinetic model parameters (optional), and (3) initial substrate concentrations. The latter are set as placeholder values to fallback on if the model is simulated without specifying any initial conditions.
 
 <details>
 
@@ -43,9 +43,12 @@ def toymodel_data():
                             'r3': 'P = X',
                             'r4': 'S + P = X'}
 
-    # here, no prior knowlegde of kinetic parameter values is available
+    # here, prior knowledge is only available for one parameter; later, when the parameter
+    # estimation is being set up (and no other specific setup was supplied), the known value
+    # will be used as start value of the estimation (lower and upper boundaries are derived
+    # from the known value)
     param_dict = {'r1': {},
-                  'r2': {},
+                  'r2': {'k_MAforward': 0.3},  # [1/h]
                   'r3': {},
                   'r4': {}}
 
@@ -66,28 +69,33 @@ Defines and returns (1) a dictionary that for each reaction contains all possibl
 ```python
 def toymodel_term_libs():
 
-    # two different rate laws were defined for each reaction: a zero rate law at index 0 (so that the reaction can be turned off)
-    # and a mass action rate law at index 1
+    # two different rate laws were defined for each reaction: a zero rate law at index 0
+    # (so that the reaction can be turned off) and a mass action rate law at index 1
     base_kinetics = {
         'r1': [{'equation': '0', 
                 'mapping': {}},
                {'equation': '(k_MAforward*S-k_MAreverse*P)', 
-                'mapping': {'k_MAforward': 'parameter', 'k_MAreverse': 'parameter', 'S': 'substrate', 'P': 'product'}}],
+                'mapping': {'k_MAforward': 'parameter', 'k_MAreverse': 'parameter', 
+                            'S': 'substrate', 'P': 'product'}}],
         'r2': [{'equation': '0', 
                 'mapping': {}},
                {'equation': '(k_MAforward*S-k_MAreverse*X)', 
-                'mapping': {'k_MAforward': 'parameter', 'k_MAreverse': 'parameter', 'S': 'substrate', 'X': 'product'}}],
+                'mapping': {'k_MAforward': 'parameter', 'k_MAreverse': 'parameter', 
+                            'S': 'substrate', 'X': 'product'}}],
         'r3': [{'equation': '0', 
                 'mapping': {}},
                {'equation': '(k_MAforward*P-k_MAreverse*X)', 
-                'mapping': {'k_MAforward': 'parameter', 'k_MAreverse': 'parameter', 'P': 'substrate', 'X': 'product'}}],
+                'mapping': {'k_MAforward': 'parameter', 'k_MAreverse': 'parameter', 
+                            'P': 'substrate', 'X': 'product'}}],
         'r4': [{'equation': '0', 
                 'mapping': {}},
                {'equation': '(k_MAforward*S*P-k_MAreverse*X)', 
-                'mapping': {'k_MAforward': 'parameter', 'k_MAreverse': 'parameter', 'S': 'substrate', 'P': 'substrate', 'X': 'product'}}]
+                'mapping': {'k_MAforward': 'parameter', 'k_MAreverse': 'parameter', 
+                            'S': 'substrate', 'P': 'substrate', 'X': 'product'}}]
     }
 
-    # the list of multiplicative terms covers all possible allosteric inhibitions and activations
+    # the list of multiplicative terms covers all possible allosteric inhibitions and 
+    # activations
     regulatory_terms = [
         {'name': 'no_reg',  # 0
          'equation': '1',
@@ -118,7 +126,7 @@ def toymodel_term_libs():
 </details>
 
 ### 2. Adding experimental data
-Only time-resolved data can be used with entries being separated by tabs. Column headers are constructed from species names enclosed by square brackets. Initial conditions can be added as extra columns with a "\_0" added to the header. Multiple files following this basic structure can be added.
+Only time-resolved data can be used. By default, entries are separated by tabs. Column headers are constructed from species names enclosed by square brackets. Initial conditions can be added as extra columns with a "\_0" added to the header. Multiple files following this basic structure can be added.
 
 <details>
 
@@ -135,9 +143,9 @@ Only time-resolved data can be used with entries being separated by tabs. Column
 Check the [data](/morsel/toymodel/true_model_data.txt) generated by the toymodel used for the rediscovery test as another example.
 
 ### 3. Parameterizing a model variant
-The parameters of a model variant can be estimated using the added experimental data following a least-squares approach. The parameterization can be repeated to handle parametric uncertainty resulting in an ensemble of parameter sets.
+The kinetic parameters of a model variant can be estimated using the added experimental data following a least-squares approach. The parameterization can be repeated to handle parametric uncertainty resulting in an ensemble of parameter sets.
 
-First, the structure of the model variant needs to be defined. This is done by combining certain selected kinetic rate laws and multiplicative terms. The structure of the model variant is represented by a so called "kinetic table". Its elements are the indices of the selected kinetic rate law variants ("base") and multiplicative terms ("terms") as they are stored in the objects defined by the *\<model-name\>_term_libs* function.
+First, the structure of the model variant needs to be defined. This is done by combining certain selected kinetic rate laws and multiplicative terms. The structure of the model variant is represented by a "kinetic table". Its elements are the indices of the selected kinetic rate law variants ("base") and multiplicative terms ("terms") as they are stored in the objects defined by the *\<model-name\>_term_libs* function.
 
 <details>
 
@@ -192,8 +200,9 @@ PE_setup = {'(r1).k_MAforward': {'start': 0.01, 'lower' 1e-2:, 'upper': 10},
 # provided, the rest are defined according to the internal logic of eval_struct_var called by 
 # the function create_parameter_ensemble
 n_runs = 10
-evaluated_vars_log = create_parameter_ensemble(model_var, n_runs, exp_data_file_names, exp_data_dataframes, model_name,
-                                               fit_params_info=PE_setup, model_data=toymodel_data, term_libs=toymodel_term_libs)
+evaluated_vars_log = create_parameter_ensemble(model_var, n_runs, exp_data_file_names, 
+                                               exp_data_dataframes, model_name, fit_params_info=PE_setup, 
+                                               model_data=toymodel_data, term_libs=toymodel_term_libs)
 ```
 
 </details>
@@ -218,10 +227,11 @@ start_var = pd.DataFrame(np.array(start_var).reshape(4, 2),
                          columns=['base', 'term1'],
                          index=['r1', 'r2', 'r3', 'r4'])
 
-# define list of candidate model changes (the first two elements of each tuple are the row and 
-# column coordinates pointing to elements in the start variant data frame and the third element 
-# is the index of the selected kinetic rate law or multiplicative term) - also: tuples are placed
-# inside inner lists because combinations of multiple tuples are also valid candidate model changes
+# define list of candidate model changes (the first two elements of each tuple
+# are the row and column coordinates pointing to elements in the start variant 
+# data frame and the third element is the index of the selected kinetic rate law 
+# or multiplicative term) - also: tuples are placed inside inner lists because 
+# combinations of multiple tuples are also valid candidate model changes
 vari_terms = [[(1,0,1)],  # r2.on
               [(2,0,1)],  # r3.on
               [(3,0,1)],  # r4.on
@@ -232,11 +242,12 @@ vari_terms = [[(1,0,1)],  # r2.on
 exp_data_file_names = ['true_model_data.txt']
 exp_data_dataframes = [pd.read_csv(file_name, sep='\t') for file_name in exp_data_file_names]
 
-# define which model selection criteria are to be used
+# define which model selection criteria are to be used for all ranking steps
 selected_MSC = ['AIC', 'AICc', 'BIC', 'CIC1', 'CIC2', 'CIC3']
 
-# use the existing parameter ensemble of the initial core model (here also referred to as the negative control)
-# alternatively, the initial core model can be evaluated inside the improved_extension_search function
+# use the existing parameter ensemble of the initial core model (here also 
+# referred to as the negative control) alternatively, the initial core model 
+# can be evaluated inside the improved_extension_search function
 reading_file = open('parameter_ensemble_pickle_file_name', 'rb')
 neg_ctrl_log = pickle.load(reading_file)
 reading_file.close()
@@ -301,7 +312,8 @@ elif best_median_rank_model_idx == best_mean_rank_model_idx:
 model_variant_name = 'selected_model_variant_name'
 evaluated_vars_log = create_parameter_ensemble(best_ranking_var_log_dict['variant'], n_runs, 
                                                exp_data_file_names, exp_data_dataframes, model_variant_name,
-                                               fit_params_info=fit_params_info, model_data=toymodel_data, term_libs=toymodel_term_libs)
+                                               fit_params_info=fit_params_info, model_data=toymodel_data,
+                                               term_libs=toymodel_term_libs)
 
 # get best parameter set of the ensemble
 final_ensemble = pd.read_csv('selected_model_variant_ensemble.csv', sep=',')
@@ -311,10 +323,9 @@ final_ensemble_best_params = final_ensemble.loc[final_ensemble['obj'] == final_e
 result_log = {'best_ranking_model_variant_idx': selected_idx,
               'best_ranking_model_variant_structure': best_ranking_var_log_dict['variant'],
               'best_param_set': final_ensemble_best_params}
-with open('rediscovery_test_result.txt', 'w') as file:
+with open('result_file.txt', 'w') as file:
     for key,value in result_log.items():
         file.write("\n%s:\n%s\n" % (key,value))
-
 ```
 
 </details>
@@ -354,4 +365,4 @@ The results of both optimizations were analyzed and visualized by two Python scr
 The data of the validation experiments is available in [this directory](/process_optimization/exp_val_data). In the file names, "L" refers to the enzyme load optimization and "T" refers to the titer optimization. "O" indicates that the selected model variant (with the **o**ptimized model structure) was used.
 
 ## Publication
-Huber, Son, Espinel-Ríos, Rexer, Reichl, Klamt (2026), Combining Kinetic Model Selection and Robust Optimization Strategies to Maximize Production of UDP-GalNAc in a Cell-free Batch Process, in preparation
+Huber, Son, Espinel-Ríos, Rexer, Reichl, Klamt (2026), Combining Automated Kinetic Model Selection with Robust Optimization and Application to Maximize Cell-free Production of UDP-GalNAc, in preparation
