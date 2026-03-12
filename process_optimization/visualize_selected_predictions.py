@@ -480,18 +480,6 @@ opt_var_a_path = cwd / 'a_constPolyP32mM_ubATP2.5mM'
 
 # 1) Titer Maximization at 7 h s.t. Maximal Enzyme Load
 
-# Model Variant: NegCtrl, Optimization Result: OP01withS_7h[O15], Validation Experiment: Exp40_TB7h
-model_path = f'{opt_var_a_path}\\NegCtrl\\ImpExtSearch_v23b_NegCtrl.cps'
-fits_data_path = f'{opt_var_a_path}\\NegCtrl\\sampling_output_Particle_Swarm50runs_v23bNegControl_Exp36.37.39.csv'
-best_opt_result_path = f'{opt_var_a_path}\\NegCtrl\\ImpExtSearch_v23b_NegCtrl_PartSwarm50x_OP01withS_7h_CrossVal_Scoring_Result_O15.pkl'
-exp_val_data_path = f'{str(exp_val_data_dir)}\\UDP-GalNAc40_TB7h_with_initConcColumns.txt'
-exp_val_data_SD_path = f'{str(exp_val_data_dir)}\\UDP-GalNAc40_TB7h_SD.txt'
-tc_plot_result_file_path = f'{opt_var_a_path}\\NegCtrl\\ImpExtSearch_v23b_NegCtrl_OP01withS_7h_O15'
-visualize_predTC_withValData(model_path, fits_data_path, best_opt_result_path, exp_val_data_path, exp_val_data_SD_path, tc_plot_result_file_path)
-titer_and_yield_timepoint = 7  # [h]
-perf_plot_result_file_path = f'{opt_var_a_path}\\NegCtrl\\ImpExtSearch_v23b_NegCtrl_OP01withS_7h_O15_base_opt_compare'
-plot_base_opt_process_comparison(baseline_exp_data_path, best_opt_result_path, exp_val_data_path, titer_and_yield_timepoint, perf_plot_result_file_path)
-
 # Model Variant: rep2_MV5, Optimization Result: OP01withS_7h[O11], Validation Experiment: Exp40_TO7h
 model_path = f'{opt_var_a_path}\\rep2_MV5\\ImpExtSearch_v23b_rep2_MV5.cps'
 fits_data_path = f'{opt_var_a_path}\\rep2_MV5\\sampling_output_Particle_Swarm50runs_ImpExtSearch_v23b_rep2_ModelVar5.csv'
@@ -509,45 +497,8 @@ plot_base_opt_process_comparison(baseline_exp_data_path, best_opt_result_path, e
 # Optimization Variant: b_constPolyP32mMATP0.5mM
 opt_var_b_path = cwd / 'b_constPolyP32mMATP0.5mM'
 
-# 2) Titer Maximization at 12 h s.t. Maximal Enzyme Load
 
-# Model Variant: NegCtrl, Optimization Result: OP01withS_12h[O34], Validation Experiment: Exp40_TB12h
-model_path = f'{opt_var_b_path}\\NegCtrl\\ImpExtSearch_v23b_NegCtrl.cps'
-fits_data_path = f'{opt_var_b_path}\\NegCtrl\\sampling_output_Particle_Swarm50runs_v23bNegControl_Exp36.37.39.csv'
-best_opt_result_path = f'{opt_var_b_path}\\NegCtrl\\ImpExtSearch_v23b_NegCtrl_PartSwarm50x_OP01withS_12h_CrossVal_Scoring_Result_O34.pkl'
-exp_val_data_path = f'{str(exp_val_data_dir)}\\UDP-GalNAc40_TB12h_with_initConcColumns.txt'
-exp_val_data_SD_path = f'{str(exp_val_data_dir)}\\UDP-GalNAc40_TB12h_SD.txt'
-tc_plot_result_file_path = f'{opt_var_b_path}\\NegCtrl\\ImpExtSearch_v23b_NegCtrl_OP01withS_12h_O34'
-visualize_predTC_withValData(model_path, fits_data_path, best_opt_result_path, exp_val_data_path, exp_val_data_SD_path, tc_plot_result_file_path)
-titer_and_yield_timepoint = 12  # [h]
-perf_plot_result_file_path = f'{opt_var_b_path}\\NegCtrl\\ImpExtSearch_v23b_NegCtrl_OP01withS_12h_O34_base_opt_compare'
-plot_base_opt_process_comparison(baseline_exp_data_path, best_opt_result_path, exp_val_data_path, titer_and_yield_timepoint, perf_plot_result_file_path)
-
-# Model Variant: rep2_MV5, Optimization Result: OP01withS_12h[O21], Validation Experiment: Exp40_TO12h
-model_path = f'{opt_var_b_path}\\rep2_MV5\\ImpExtSearch_v23b_rep2_MV5.cps'
-fits_data_path = f'{opt_var_b_path}\\rep2_MV5\\sampling_output_Particle_Swarm50runs_ImpExtSearch_v23b_rep2_ModelVar5.csv'
-best_opt_result_path = f'{opt_var_b_path}\\rep2_MV5\\ImpExtSearch_v23b_rep2_MV5_PartSwarm50x_OP01withS_12h_CrossVal_Scoring_Result_O21.pkl'
-exp_val_data_path = f'{str(exp_val_data_dir)}\\UDP-GalNAc40_TO12h_with_initConcColumns.txt'
-exp_val_data_SD_path = f'{str(exp_val_data_dir)}\\UDP-GalNAc40_TO12h_SD.txt'
-result_file_name = f'{opt_var_b_path}\\rep2_MV5\\ImpExtSearch_v23b_rep2_MV5_OP01withS_12h_O21'
-visualize_predTC_withValData(model_path, fits_data_path, best_opt_result_path, exp_val_data_path, exp_val_data_SD_path, result_file_name)
-titer_and_yield_timepoint = 12  # [h]
-perf_plot_result_file_path = f'{opt_var_b_path}\\rep2_MV5\\ImpExtSearch_v23b_rep2_MV5_OP01withS_12h_O21_base_opt_compare'
-plot_base_opt_process_comparison(baseline_exp_data_path, best_opt_result_path, exp_val_data_path, titer_and_yield_timepoint, perf_plot_result_file_path)
-
-# 3) Enzyme Load Minimization s.t. Minimal Titer and Yield
-
-# Model Variant: NegCtrl, Optimization Result: OP05withS[O27], Validation Experiment: Exp40_LB
-model_path = f'{opt_var_b_path}\\NegCtrl\\ImpExtSearch_v23b_NegCtrl.cps'
-fits_data_path = f'{opt_var_b_path}\\NegCtrl\\sampling_output_Particle_Swarm50runs_v23bNegControl_Exp36.37.39.csv'
-best_opt_result_path = f'{opt_var_b_path}\\NegCtrl\\ImpExtSearch_v23b_NegCtrl_PartSwarm50x_OP05withS_CrossVal_Scoring_Result_O27.pkl'
-exp_val_data_path = f'{str(exp_val_data_dir)}\\UDP-GalNAc40_LB_with_initConcColumns.txt'
-exp_val_data_SD_path = f'{str(exp_val_data_dir)}\\UDP-GalNAc40_LB_SD.txt'
-result_file_name = f'{opt_var_b_path}\\NegCtrl\\ImpExtSearch_v23b_NegCtrl_OP05withS_O27'
-visualize_predTC_withValData(model_path, fits_data_path, best_opt_result_path, exp_val_data_path, exp_val_data_SD_path, result_file_name)
-titer_and_yield_timepoint = 24  # [h]
-perf_plot_result_file_path = f'{opt_var_b_path}\\NegCtrl\\ImpExtSearch_v23b_NegCtrl_OP05withS_O27_base_opt_compare'
-plot_base_opt_process_comparison(baseline_exp_data_path, best_opt_result_path, exp_val_data_path, titer_and_yield_timepoint, perf_plot_result_file_path)
+# 2) Enzyme Load Minimization s.t. Minimal Titer and Yield
 
 # Model Variant: rep2_MV5, Optimization Result: OP05withS[O19], Validation Experiment: Exp40_LO
 model_path = f'{opt_var_b_path}\\rep2_MV5\\ImpExtSearch_v23b_rep2_MV5.cps'
