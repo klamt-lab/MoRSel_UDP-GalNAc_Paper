@@ -307,10 +307,10 @@ def plot_base_opt_process_comparison(baseline_exp_data_path, best_opt_result_pat
 
     # PREPARE DATA
 
-    Uri_MW = 244.20         # [g/mol]
-    GalNAc_MW = 221.21      # [g/mol]
-    UDP_GalNAc_MW = 607.36  # [g/mol]
-    reaction_vol = 0.5      # [ml]
+#    Uri_MW = 244.20         # [g/mol]
+#    GalNAc_MW = 221.21      # [g/mol]
+#    UDP_GalNAc_MW = 607.36  # [g/mol]
+#    reaction_vol = 0.5      # [ml]
 
     # 1) get enzyme distributions (convert concentrations from mM to g/l)
     baseline_E_distr = dict(opt_result_start_init_conc.loc[[name for name in opt_result_start_init_conc.index if
@@ -363,13 +363,13 @@ def plot_base_opt_process_comparison(baseline_exp_data_path, best_opt_result_pat
                                       index=baseline_S_init_conc.keys(),
                                       columns=['substrate', 'baseline', 'optimized'])
 
-    # 4) get (absolute) product titers at the specified process time point [mmol_product/l * (g/mol * 1/1000) = g_product/l]
-    baseline_prod_titer = (baseline_data_df_raw.loc[baseline_data_df_raw['Time'] == titer_and_yield_timepoint, '[UDP_GalNAc]'].iloc[0]) * (UDP_GalNAc_MW * 1/1000)
-    opt_prod_titer = (val_data_df_raw.loc[val_data_df_raw['Time'] == titer_and_yield_timepoint, '[UDP_GalNAc]'].iloc[0]) * (UDP_GalNAc_MW * 1/1000)
+    # 4) get (absolute) product titers at the specified process time point [mmol_product/l]
+    baseline_prod_titer = baseline_data_df_raw.loc[baseline_data_df_raw['Time'] == titer_and_yield_timepoint, '[UDP_GalNAc]'].iloc[0]
+    opt_prod_titer = val_data_df_raw.loc[val_data_df_raw['Time'] == titer_and_yield_timepoint, '[UDP_GalNAc]'].iloc[0]
 
-    # 5) calculate (absolute) product yields [(g_product/l)/(g_substrate/l) = (g_product)/(g_substrate)]:
-    baseline_yield = (2*(baseline_prod_titer)) / ( (baseline_S_init_conc['Uri']*Uri_MW*1/1000) + (baseline_S_init_conc['GalNAc']*GalNAc_MW*1/1000))
-    opt_yield = (2*(opt_prod_titer)) / ( (opt_S_init_conc['Uri']*Uri_MW*1/1000) + (opt_S_init_conc['GalNAc']*GalNAc_MW*1/1000) )
+    # 5) calculate (absolute) product yields [mmol product/l / mmol substrate/l = mmol product / mmol substrate]
+    baseline_yield = (2*(baseline_prod_titer)) / (baseline_S_init_conc['Uri'] + baseline_S_init_conc['GalNAc'])
+    opt_yield = (2*(opt_prod_titer)) / (opt_S_init_conc['Uri'] + opt_S_init_conc['GalNAc'])
 
     # VISUALIZE DATA
     fig, axes = plt.subplot_mosaic([['E_distr', 'E_distr', 'E_distr', 'E_distr', 'E_distr', 'E_tot',],
@@ -408,38 +408,38 @@ def plot_base_opt_process_comparison(baseline_exp_data_path, best_opt_result_pat
     axes['S_ATP_distr'].set_ylabel('Concentration [mM]', fontsize=font_size)
     axes['S_ATP_distr'].get_legend().remove()
 
-    # plot absolute values of product titers [g_product/l] and product yields [g_product/g_substrate]
+    # plot absolute values of product titers [mmol product/l] and product yields [mmol product/mmol_substrate]
     axes['titer_abs'].bar(['baseline_titer_abs', 'optimized_titer_abs'],
                 [baseline_prod_titer, opt_prod_titer],
                 color=colors)
     axes['titer_abs'].set_xticklabels([])
     axes['titer_abs'].set_xticks([])
-    axes['titer_abs'].set_ylabel('$Titer_{' + str(titer_and_yield_timepoint) + 'h}$ [$g_{product}/l$]', labelpad=7, fontsize=font_size)
+    axes['titer_abs'].set_ylabel('$Titer_{' + str(titer_and_yield_timepoint) + 'h}$ [$mmol_{product}/l$]', labelpad=7, fontsize=font_size)
     axes['yield_abs'].bar(['baseline_yield_abs', 'optimized_yield_abs'],
                 [baseline_yield, opt_yield],
                 color=colors)
     axes['yield_abs'].set_xticklabels([])
     axes['yield_abs'].set_xticks([])
-    axes['yield_abs'].set_ylabel('$Yield_{' + str(titer_and_yield_timepoint) + 'h}$ [$g_{product}/g_{substrate}$]', labelpad=7, fontsize=font_size)
+    axes['yield_abs'].set_ylabel('$Yield_{' + str(titer_and_yield_timepoint) + 'h}$ [$mmol_{product}/mmol_{substrate}$]', labelpad=7, fontsize=font_size)
 
     # only plot relative values of product titers and product yields if it makes sense, i.e., if the enzyme load is different between the baseline and the optimized scenario (which in turn will lead to a difference between absolute and relative titers/yields)
     if np.round(baseline_E_tot['gram_enzyme_load'], 2) != np.round(opt_E_tot['gram_enzyme_load'], 2):
-        # relative titer = (absolute titer [g_product/l] ) / enzyme load [g_enzyme/l] => final unit: (g_product)/(g_enzyme)
+        # relative titer: (absolute titer [mmol product/l] ) / enzyme load [g enzyme/l] => (mmol product)/(g enzyme)
         axes['titer_rel'].bar(['baseline_titer_rel', 'optimized_titer_rel'],
                     [baseline_prod_titer / baseline_E_tot['gram_enzyme_load'],
                      opt_prod_titer / opt_E_tot['gram_enzyme_load']],
                     color=colors)
         axes['titer_rel'].set_xticklabels([])
         axes['titer_rel'].set_xticks([])
-        axes['titer_rel'].set_ylabel('$rel. Titer_{' + str(titer_and_yield_timepoint) + 'h}$ [$g_{product}/g_{enzyme}$]', labelpad=7, fontsize=font_size)
-        # relative yield = absolute yield [g_product/g_substrate] / enzyme load [g_enzyme/l] => final unit: (g_product * l)/(g_substrate * g_enzyme)
+        axes['titer_rel'].set_ylabel('$rel. Titer_{' + str(titer_and_yield_timepoint) + 'h}$ [$mmol_{product}/g_{enzyme}$]', labelpad=7, fontsize=font_size)
+        # relative yield = absolute yield [mmol product/ mmol substrate] / enzyme load [g enzyme/l] => (mmol product)/(mmol substrat * (g enzyme/l))
         axes['yield_rel'].bar(['baseline_yield_rel', 'optimized_yield_rel'],
                     [baseline_yield / baseline_E_tot['gram_enzyme_load'], 
                     opt_yield / opt_E_tot['gram_enzyme_load']],
                     color=colors)
         axes['yield_rel'].set_xticklabels([])
         axes['yield_rel'].set_xticks([])
-        axes['yield_rel'].set_ylabel('$rel. Yield_{' + str(titer_and_yield_timepoint) + 'h}$ [$g_{product} \cdot l/g_{substrate} \cdot g_{enzyme}$]', labelpad=7, fontsize=font_size)
+        axes['yield_rel'].set_ylabel('$rel. Yield_{' + str(titer_and_yield_timepoint) + 'h}$ [$mmol_{product}/(mmol_{substrate} \cdot (g_{enzyme}/l))$]', labelpad=7, fontsize=font_size-2)
     else:
         axes['titer_rel'].axis("off")
         axes['yield_rel'].axis("off")
@@ -480,6 +480,18 @@ opt_var_a_path = cwd / 'a_constPolyP32mM_ubATP2.5mM'
 
 # 1) Titer Maximization at 7 h s.t. Maximal Enzyme Load
 
+# Model Variant: NegCtrl, Optimization Result: OP01withS_7h[O15], Validation Experiment: Exp40_TB7h
+model_path = f'{opt_var_a_path}\\NegCtrl\\ImpExtSearch_v23b_NegCtrl.cps'
+fits_data_path = f'{opt_var_a_path}\\NegCtrl\\sampling_output_Particle_Swarm50runs_v23bNegControl_Exp36.37.39.csv'
+best_opt_result_path = f'{opt_var_a_path}\\NegCtrl\\ImpExtSearch_v23b_NegCtrl_PartSwarm50x_OP01withS_7h_CrossVal_Scoring_Result_O15.pkl'
+exp_val_data_path = f'{str(exp_val_data_dir)}\\UDP-GalNAc40_TB7h_with_initConcColumns.txt'
+exp_val_data_SD_path = f'{str(exp_val_data_dir)}\\UDP-GalNAc40_TB7h_SD.txt'
+tc_plot_result_file_path = f'{opt_var_a_path}\\NegCtrl\\ImpExtSearch_v23b_NegCtrl_OP01withS_7h_O15'
+visualize_predTC_withValData(model_path, fits_data_path, best_opt_result_path, exp_val_data_path, exp_val_data_SD_path, tc_plot_result_file_path)
+titer_and_yield_timepoint = 7  # [h]
+perf_plot_result_file_path = f'{opt_var_a_path}\\NegCtrl\\ImpExtSearch_v23b_NegCtrl_OP01withS_7h_O15_base_opt_compare'
+plot_base_opt_process_comparison(baseline_exp_data_path, best_opt_result_path, exp_val_data_path, titer_and_yield_timepoint, perf_plot_result_file_path)
+
 # Model Variant: rep2_MV5, Optimization Result: OP01withS_7h[O11], Validation Experiment: Exp40_TO7h
 model_path = f'{opt_var_a_path}\\rep2_MV5\\ImpExtSearch_v23b_rep2_MV5.cps'
 fits_data_path = f'{opt_var_a_path}\\rep2_MV5\\sampling_output_Particle_Swarm50runs_ImpExtSearch_v23b_rep2_ModelVar5.csv'
@@ -497,7 +509,45 @@ plot_base_opt_process_comparison(baseline_exp_data_path, best_opt_result_path, e
 # Optimization Variant: b_constPolyP32mMATP0.5mM
 opt_var_b_path = cwd / 'b_constPolyP32mMATP0.5mM'
 
-# 2) Enzyme Load Minimization s.t. Minimal Titer and Yield
+# 2) Titer Maximization at 12 h s.t. Maximal Enzyme Load
+
+# Model Variant: NegCtrl, Optimization Result: OP01withS_12h[O34], Validation Experiment: Exp40_TB12h
+model_path = f'{opt_var_b_path}\\NegCtrl\\ImpExtSearch_v23b_NegCtrl.cps'
+fits_data_path = f'{opt_var_b_path}\\NegCtrl\\sampling_output_Particle_Swarm50runs_v23bNegControl_Exp36.37.39.csv'
+best_opt_result_path = f'{opt_var_b_path}\\NegCtrl\\ImpExtSearch_v23b_NegCtrl_PartSwarm50x_OP01withS_12h_CrossVal_Scoring_Result_O34.pkl'
+exp_val_data_path = f'{str(exp_val_data_dir)}\\UDP-GalNAc40_TB12h_with_initConcColumns.txt'
+exp_val_data_SD_path = f'{str(exp_val_data_dir)}\\UDP-GalNAc40_TB12h_SD.txt'
+tc_plot_result_file_path = f'{opt_var_b_path}\\NegCtrl\\ImpExtSearch_v23b_NegCtrl_OP01withS_12h_O34'
+visualize_predTC_withValData(model_path, fits_data_path, best_opt_result_path, exp_val_data_path, exp_val_data_SD_path, tc_plot_result_file_path)
+titer_and_yield_timepoint = 12  # [h]
+perf_plot_result_file_path = f'{opt_var_b_path}\\NegCtrl\\ImpExtSearch_v23b_NegCtrl_OP01withS_12h_O34_base_opt_compare'
+plot_base_opt_process_comparison(baseline_exp_data_path, best_opt_result_path, exp_val_data_path, titer_and_yield_timepoint, perf_plot_result_file_path)
+
+# Model Variant: rep2_MV5, Optimization Result: OP01withS_12h[O21], Validation Experiment: Exp40_TO12h
+model_path = f'{opt_var_b_path}\\rep2_MV5\\ImpExtSearch_v23b_rep2_MV5.cps'
+fits_data_path = f'{opt_var_b_path}\\rep2_MV5\\sampling_output_Particle_Swarm50runs_ImpExtSearch_v23b_rep2_ModelVar5.csv'
+best_opt_result_path = f'{opt_var_b_path}\\rep2_MV5\\ImpExtSearch_v23b_rep2_MV5_PartSwarm50x_OP01withS_12h_CrossVal_Scoring_Result_O21.pkl'
+exp_val_data_path = f'{str(exp_val_data_dir)}\\UDP-GalNAc40_TO12h_with_initConcColumns.txt'
+exp_val_data_SD_path = f'{str(exp_val_data_dir)}\\UDP-GalNAc40_TO12h_SD.txt'
+result_file_name = f'{opt_var_b_path}\\rep2_MV5\\ImpExtSearch_v23b_rep2_MV5_OP01withS_12h_O21'
+visualize_predTC_withValData(model_path, fits_data_path, best_opt_result_path, exp_val_data_path, exp_val_data_SD_path, result_file_name)
+titer_and_yield_timepoint = 12  # [h]
+perf_plot_result_file_path = f'{opt_var_b_path}\\rep2_MV5\\ImpExtSearch_v23b_rep2_MV5_OP01withS_12h_O21_base_opt_compare'
+plot_base_opt_process_comparison(baseline_exp_data_path, best_opt_result_path, exp_val_data_path, titer_and_yield_timepoint, perf_plot_result_file_path)
+
+# 3) Enzyme Load Minimization s.t. Minimal Titer and Yield
+
+# Model Variant: NegCtrl, Optimization Result: OP05withS[O27], Validation Experiment: Exp40_LB
+model_path = f'{opt_var_b_path}\\NegCtrl\\ImpExtSearch_v23b_NegCtrl.cps'
+fits_data_path = f'{opt_var_b_path}\\NegCtrl\\sampling_output_Particle_Swarm50runs_v23bNegControl_Exp36.37.39.csv'
+best_opt_result_path = f'{opt_var_b_path}\\NegCtrl\\ImpExtSearch_v23b_NegCtrl_PartSwarm50x_OP05withS_CrossVal_Scoring_Result_O27.pkl'
+exp_val_data_path = f'{str(exp_val_data_dir)}\\UDP-GalNAc40_LB_with_initConcColumns.txt'
+exp_val_data_SD_path = f'{str(exp_val_data_dir)}\\UDP-GalNAc40_LB_SD.txt'
+result_file_name = f'{opt_var_b_path}\\NegCtrl\\ImpExtSearch_v23b_NegCtrl_OP05withS_O27'
+visualize_predTC_withValData(model_path, fits_data_path, best_opt_result_path, exp_val_data_path, exp_val_data_SD_path, result_file_name)
+titer_and_yield_timepoint = 24  # [h]
+perf_plot_result_file_path = f'{opt_var_b_path}\\NegCtrl\\ImpExtSearch_v23b_NegCtrl_OP05withS_O27_base_opt_compare'
+plot_base_opt_process_comparison(baseline_exp_data_path, best_opt_result_path, exp_val_data_path, titer_and_yield_timepoint, perf_plot_result_file_path)
 
 # Model Variant: rep2_MV5, Optimization Result: OP05withS[O19], Validation Experiment: Exp40_LO
 model_path = f'{opt_var_b_path}\\rep2_MV5\\ImpExtSearch_v23b_rep2_MV5.cps'

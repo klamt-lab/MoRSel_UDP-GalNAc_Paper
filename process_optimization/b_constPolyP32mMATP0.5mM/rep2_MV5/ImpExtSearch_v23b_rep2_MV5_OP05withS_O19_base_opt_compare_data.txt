@@ -10,7 +10,7 @@ substrates_init :        substrate  baseline  optimized
 GalNAc    GalNAc      50.0  46.486335
 Uri          Uri      50.0  51.409825
 ATP          ATP       0.5   0.500000
-titers_abs : {'baseline': np.float64(24.516728683199997), 'optimized': np.float64(21.09955067528531)}
-titers_rel : {'baseline': np.float64(46.25797920264291), 'optimized': np.float64(83.42305538427225)}
-yields_abs : {'baseline': np.float64(2.1071080280354955), 'optimized': np.float64(1.8477969068658808)}
-yields_rel : {'baseline': np.float64(3.975675572303381), 'optimized': np.float64(7.305788927577478)}
+titers_abs : {'baseline': np.float64(40.3660575), 'optimized': np.float64(34.7397765333333)}
+titers_rel : {'baseline': np.float64(76.1623735554579), 'optimized': np.float64(137.35355536135447)}
+yields_abs : {'baseline': np.float64(0.8073211499999999), 'optimized': np.float64(0.7097270538543834)}
+yields_rel : {'baseline': np.float64(1.5232474711091581), 'optimized': np.float64(2.806107117283908)}
