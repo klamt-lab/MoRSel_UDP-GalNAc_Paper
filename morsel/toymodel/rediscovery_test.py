@@ -106,7 +106,8 @@ for item in ([ax.title, ax.xaxis.label, ax.yaxis.label] +
 ax.legend(loc='upper right', fontsize=12)
 fig.savefig('true_model_tc.png', dpi=200, bbox_inches='tight')
 plt.close()
-# use time cours result of the true model simulation to generate 'fake experimental data' for the model selection;  store the result as it is without adding any noise to it
+# use time cours result of the true model simulation to generate 'fake experimental data' for the model selection
+## for now: just store the result as it is without adding any noise to it
 true_tc_result.columns = ['[P]', '[S]', '[X]']
 true_tc_result['[P]_0'] = pd.Series([0])
 true_tc_result['[S]_0'] = pd.Series([10])
@@ -272,10 +273,14 @@ for col, ax in zip(final_ensemble.columns[1:-1], axes.flat):
     # plot vertical line for the true parameter value (if the parameter is part of the selected model structure)
     if col in true_params.keys():
         ax.axvline(true_params[col], color='black', linestyle='dashed')
-    # set all font sizes to 12 points
-    for item in ([ax.title, ax.xaxis.label, ax.yaxis.label] +
-             ax.get_xticklabels() + ax.get_yticklabels()):
+    # set x and y label font sizes
+    for item in ([ax.xaxis.label, ax.yaxis.label]):
+        item.set_fontsize(14)
+    # set x and y tick label font
+    for item in (ax.get_xticklabels() + ax.get_yticklabels()):
         item.set_fontsize(10)
+    # hide y-axis label
+    ax.set_ylabel('')
 fig.tight_layout(rect=[0, 0.03, 1, 0.95])
 plt.savefig('final_ensemble_param_dist.png', bbox_inches='tight', dpi=200)
 
