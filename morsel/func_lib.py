@@ -2156,7 +2156,7 @@ def compare_struct_var_tcs_merged(var1, var2, exp_data_dataframes, exp_ID, exp_n
     # -###########################################################################
     # MULTIPLOT
     # create seaborn line plots from simulated result data frame (separate plots for uridine-based, GalNAc and GalNAc1p, and adenosine-based species) for variant 1 (multi plot row index 0, line style solid) and variant 2 (multi plot row index 0, line style dashed); for the simulation results: plot the mean and 95% confidence interval by aggregating over PE replicates (at each time point)
-    fig, axs = plt.subplots(1, 3, figsize=(16,9), layout='constrained')
+    fig, axs = plt.subplots(1, 3, figsize=(16,7), layout='constrained')
     scatterplot_marker_size = 20
     # define the species groups for each subplot
     species_groups = [['Uri', 'UMP', 'UDP', 'UTP', 'UDP_GalNAc'],
@@ -2181,7 +2181,12 @@ def compare_struct_var_tcs_merged(var1, var2, exp_data_dataframes, exp_ID, exp_n
                 sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y=f'[{species}]', ax=ax,
                                 color=colors[i][j], s=scatterplot_marker_size, label=f'{species}')
         # create custom legend
-        legend_elements = [Patch(facecolor=colors[i][j], label=species) for j, species in enumerate(species_groups[i])]
+        legend_elements = list()
+        for j, species in enumerate(species_groups[i]):
+            # replace underscores with dashes if they show up in the species name 
+            if '_' in species:
+                species = species.replace('_', '-')
+            legend_elements.append(Patch(facecolor=colors[i][j], label=species))
         ax.legend(handles=legend_elements, frameon=True)
     # overwrite axis labels which were automatically generated from data frame column names
     axs[0].set(xlabel='Time [h]', ylabel='Concentration [mM]')
