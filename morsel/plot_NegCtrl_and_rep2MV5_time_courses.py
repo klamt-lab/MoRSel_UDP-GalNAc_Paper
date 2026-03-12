@@ -71,6 +71,9 @@ exp_names = ['UDP-GalNAc36_5',
              'UDP-GalNAc39_LO',
              'UDP-GalNAc39_TB',
              'UDP-GalNAc39_TO']
+# global plotting options
+sns.set(font_scale = 1.25)
+sns.set_style('whitegrid')
 for exp_ID, exp_name in enumerate(exp_names):
     # call plotting function which will save the plot and the associated simulation data
     compare_struct_var_tcs_merged(var1, var2, exp_data_dataframes, exp_ID, exp_name, plot_name)
