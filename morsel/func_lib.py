@@ -45,7 +45,6 @@ def UDP_GalNAc_model_data():
     """
 
     # define reaction schemes; all of them are set even if a reaction is disabled in the structural variant matrix (in this case the underlying rate law is set to 0); the schemes are used as default and are modified according to the variable terms set in the structural variant matrix; modifiers that are not used in the selected rate law are inactive
-    ## v23: add P to products of ADP_Decay_v1
     reaction_scheme_dict = {'ADP_Decay_v1': 'ADP -> AMP + P',
                             'ADP_Decay_v2': 'ADP + ADP -> ATP + AMP',
                             'GLMU': 'GalNAc1P + UTP = UDP_GalNAc + PP;  E_GLMU',
@@ -63,9 +62,7 @@ def UDP_GalNAc_model_data():
                             'UMPK_ADP': 'UMP + ADP = UDP + AMP;  E_UMPK ATPP ATP',
                             'UMPK_ATPP': 'UMP + ATPP = UDP + ATP;  E_UMPK ADP AMP'}
 
-    # collect known literature values of kinetic parameters; not all parameters have to appear here - some may not be used depending on the kinetics that are selected according to the structural variant matrix; kcat [1/h]; Km, ki, ka [mM]; K_eq [-]
-    ## v20c: remove all lit. data except known Keq values of the main _ATP variants
-    ## v23b: add NAHK literature information (as no experimental data points are available for NAHK substrates and products so we need some information for the fit)
+    # collect known literature values of kinetic parameters; not all parameters have to appear here - some may not be used depending on the kinetics that are selected according to the structural variant matrix; kcat [1/h]; Km, ki, ka [mM]; K_eq [-]; these literature values are used in the eval_struct_var function to automatically define the fit items (if no fit_params_info dictionary with a specific parameter estimation setup is provided instead)
     param_dict = {'ADP_Decay_v1': {},
                   'ADP_Decay_v2': {},
                   'GLMU': {'K_eq_GLMU': 210},               # [eQuilibrator; pH 9; pMg=-log10(0.120)=0.9]
@@ -283,7 +280,7 @@ def toymodel_data():
                             'r3': 'P = X',
                             'r4': 'S + P = X'}
 
-    # collect known literature values of kinetic parameters; not all parameters have to appear here - some may not be used depending on the kinetics that are selected according to the structural variant matrix; kcat [1/h]; Km, ki, ka [mM]; K_eq [-]
+    # collect known literature values of kinetic parameters; not all parameters have to appear here - some may not be used depending on the kinetics that are selected according to the structural variant matrix; kcat [1/h]; Km, ki, ka [mM]; K_eq [-]; these literature values are used in the eval_struct_var function to automatically define the fit items (if no fit_params_info dictionary with a specific parameter estimation setup is provided instead)
     param_dict = {'r1': {},
                   'r2': {},
                   'r3': {},
@@ -914,7 +911,6 @@ def eval_struct_var(struct_var, exp_data_file_names, exp_data_dataframes, fit_pa
     :type PE_results: list
     """
 
-    ##TODO: very rarely this error happens: "CFitting (7): Insufficient experimental data (rows requested '8', rows found '-1')." -> in those cases the estimation gets empty data, but why? => add print statements to track the flow of experimental data from the input argument to the add_experiment function and beyond to when the estimation is started to check what's going wrong in those cases
 
     # ----------------------------------------
     # PREPARE EXP DATA AND CREATE MODEL OBJECT
@@ -943,7 +939,6 @@ def eval_struct_var(struct_var, exp_data_file_names, exp_data_dataframes, fit_pa
     # get only those reaction parameters that are not mapped to an already existing one, i.e., the set of unique reaction parameters
     reaction_params = get_reaction_parameters(model=model_object)
     reaction_params_unique = reaction_params.loc[reaction_params['mapped_to'] == '']
-    ## v23b: change the way parameter boundaries are generated for kcat, K_eq, and Km (make it more realistic and stick closer to a literature value if it is available)
     # generate fit parameters object (list of dictionaries; [{'name': str, 'lower': float, 'upper': float}, ...]); start and boundary values are generated according to several criteria (parameter type, substrate, availability of literature values)
     fit_items = list()
     for i in range(len(reaction_params_unique.index)):
@@ -1096,9 +1091,7 @@ def eval_struct_var(struct_var, exp_data_file_names, exp_data_dataframes, fit_pa
         # be caught; the while loop will only move on if the objective value of the estimation is no 
         # longer Inf
         while math.isinf(fit_statistics['obj']):
-            ##DEBUG-PRINT
             print('\n CFitting(7) error was raised despite all model data available ... re-add the data to the model object and re-run the parameter estimation.')
-            ##DEBUG-PRINT
             # delete all experimental data that was added to the parameter estimation task
             remove_experiments(model=model_object)
             # re-add the experimental data to the model object
@@ -1113,25 +1106,17 @@ def eval_struct_var(struct_var, exp_data_file_names, exp_data_dataframes, fit_pa
             # save estimation (i.e., fitting) results of this re-run
             estimated_parameters = get_parameters_solution()
             fit_statistics = get_fit_statistic()
-            ##DEBUG-PRINT
             print('Objective value of re-run: ', fit_statistics['obj'])
-            ##DEBUG-PRINT
         # calculate different model selection criteria; assumption: measurement errors are independent, 
         # identically and normally distributed with the same variance; if this holds then we can use the 
         # least squares cost function (RSS) to compute AIC, AICc, and BIC
         # (1) Akaike Information Criterion (AIC); equation from Portet2020
         # (2) AICc - AIC corrected for small sample sizes (k > (n/40)); equation from Portet2020
         # (3) Bayesian Information Criterion (BIC); equation from Wikipedia
-        ##TODO: find good source besides Wikipedia for BIC equation using RSS
         # for all criteria: lower value = better approximating model
         # RSS: residual sum of squares (the objective value of the least squares parameter estimation)
         # k: the number of estimated model parameters + 1 ('for the variance')
         # n: and the number of data points ('observations') included in the estimation
-        # literature references:
-        #   AIC and AICc: Portet2020 
-        #                 (<https://doi.org/10.1016/j.idm.2019.12.010>)
-        #   BIC: Wikipedia 
-        #        (<https://en.wikipedia.org/wiki/Bayesian_information_criterion#Gaussian_special_case>)
         RSS = fit_statistics['obj']
         k = len(estimated_parameters.index) + 1
         n = fit_statistics['valid_data_points']
@@ -1633,114 +1618,6 @@ def sim_model_obj_with_estim_params(model_obj, estim_params, init_conc_dict, dur
     return tc_result
 
 
-##TODO: this function is outdated (8/12/2025) ... needs to be updated
-def gen_data_from_struct_var(ref_var, ref_eval_result_file_name, exp_data_file_names, exp_data_dataframes, 
-                             output_data_file_names, ref_var_ensemble=None, fit_params_info=None, 
-                             model_data=UDP_GalNAc_model_data, term_libs=UDP_GalNAc_model_term_libs):
-    """ Generates data (with and without added noise) from simulating a reference model variant. The kinetic parameter values required for the simulation are taken either from an existing parameter ensemble of the reference model or from repeated evaluations of the reference model (the best parameter set is chosen based on the RSS).
-
-    :param ref_var: a structural variant matrix that is used as reference to generate data from
-    :type ref_var: pandas.core.frame.DataFrame
-    :param ref_eval_result_file_name: the name of the file that contains the evaluation result of the reference variant
-    :type ref_eval_result_file_name: string
-    :param exp_data_file_names: a list of experimental data file names (strings)
-    :type exp_data_file_names: list
-    :param exp_data_dataframes: a list of pandas DataFrames containing experimental data
-    :type exp_data_dataframes: list
-    :param output_data_file_names: a list of file name strings for the generated data files
-    :type output_data_file_names: list
-    :param ref var_ensemble: available evaluation log of the reference variant
-    :type ref_var_ensemble: list or None
-    :param fit_params_info: an optional dictionary with start values and boundary information of model parameters to be estimated (if not provided then the start values and boundaries are set according to the internal logic of the functions 'create_model_obj_from_struct_var' and 'eval_struct_var' respectively)
-    :type fit_params_info: dictionary or None
-    :param model_data: model-specific function that contains information on the reaction schemes, known literature values for reaction parameters, and placeholder values for all non-zero initial concentrations (default: UDP_GalNAc model)
-    :type model_data: function
-    :param term_libs: model-specific function that contains all potential base rate law equations as well as all potential regulation terms (default: UDP_GalNAc model)
-    :type term_libs: function
-    """
-
-    # evaluate reference model to get different sets of kinetic parameter values from the replicates then pick the best one; check if an existing evaluation log of the reference variant was passed as argument
-    if ref_var_ensemble is not None:
-        # use the existing evaluation log (parameter ensemble of the reference variant)
-        print('Using existing parameter ensemble of the reference model variant.')
-        ref_model_eval_result = ref_var_ensemble[0]
-    else:
-        # evaluate reference model variant and store results
-        print('Evaluating reference model variant ...')
-        ref_model_eval_result = eval_struct_var(ref_var, exp_data_file_names, exp_data_dataframes, 
-                                                fit_params_info=fit_params_info, num_replicates=3, 
-                                                PE_algorithm_info=PE_algorithm_info,
-                                                model_data=model_data, term_libs=term_libs)
-        print('Evaluation of reference model variant complete.')
-        storage_file = open(ref_eval_result_file_name, 'wb')
-        pickle.dump(ref_model_eval_result, storage_file)
-        storage_file.close()
-    # sort the repeats of the reference model evaluation according to their RSS (all replicates have the same number of model parameters and are estimated with the same number of experimental data points so they can be compared directly via the residual sum of squares)
-    ref_model_eval_result_sorted = sorted(ref_model_eval_result['estimation_results'], key=lambda d: d['fit_statistics']['obj'])
-    best_ref_model_params = ref_model_eval_result_sorted[0]['estimated_parameters']
-    # create COPASI model object of the reference model variant
-    ref_model_obj, _ = create_model_obj_from_struct_var(ref_var, model_data=model_data, term_libs=term_libs)
-    # extract initial species concentrations from experimental data
-    init_conc_dicts = list()
-    for df in exp_data_dataframes:
-        # only take those columns that are marked with '_0' to signify initial values
-        df_init_cols = df.filter(regex='_0')
-        # only the first value at time point 0 is relevant
-        init_conc_dict = dict(df_init_cols.iloc[0, :])
-        # remove the trailing '_0' from all dictionary keys (subsequent simulations expect species names without them)
-        corrected_dict = { k.replace('_0', ''): v for k, v in init_conc_dict.items() }
-        init_conc_dicts.append(corrected_dict)
-    # run time course simulations (and show progress bar)
-    ##TODO: time course data frames use square brackets in column names ...
-    ref_model_tcs = []
-    for init_conc_dict in tqdm(init_conc_dicts, desc='Ref. Model Time Course Simulations (with best parameter set)'):
-        ref_model_tc = sim_model_obj_with_estim_params(ref_model_obj, best_ref_model_params, init_conc_dict)
-        ref_model_tcs.append(ref_model_tc)
-    # add multiplicative noise (signal * (1 + noise)) to the simulation results; the noise is drawn from a (Gaussian) normal distribution
-    ref_model_tcs_noisy = []
-    for tc_df in ref_model_tcs:
-        mu, sigma = 0, 0.1 # mu: mean; sigma: standard deviation
-        gaussian_noise = np.random.normal(mu, sigma, [len(tc_df.index), len(tc_df.columns)])
-        ref_model_tcs_noisy.append(tc_df * (1 + gaussian_noise))
-    ref_model_tcs_data = [ref_model_tcs, ref_model_tcs_noisy]
-    # change time course output data frames to match the format of the experimental data frames (only selected time points and species columns, different column names, take initial substrate concentrations from new time courses and initial enzyme concentrations from experimental data) - repeat this for both normal and noise time course data lists
-    output_list = list()
-    for df_list in ref_model_tcs_data:
-        i = 0
-        for init_conc_dict in init_conc_dicts:
-            ref_model_tc_reduced = df_list[i].loc[[0, 0.5, 1, 2, 4, 7, 20, 24], :]
-            output_df = pd.DataFrame(columns=["Uri", "UMP", "UDP_GalNAc", "UDP", "UTP", "AMP", "ADP",
-                                              "ATP", "GalNAc_0", "ATP_0", "ADP_0", "Uri_0", "E_PPA_0", "E_PPK3_0",
-                                              "E_UDK_0", "E_NAHK_0", "E_GLMU_0", "E_UMPK_0"],
-                                     index=ref_model_tc_reduced.index)
-            ##TODO: ... the keys used for ref_model_tc_reduced don't use square brackets ('ADP' instead of '[ADP]' which is the column naming scheme that Copasi is using for time course results) ... why does this work?
-            output_df["ADP"] = pd.concat([ref_model_tc_reduced.loc[:, "ADP"]], axis=1)
-            output_df["UMP"] = pd.concat([ref_model_tc_reduced.loc[:, "UMP"]], axis=1)
-            output_df["UTP"] = pd.concat([ref_model_tc_reduced.loc[:, "UTP"]], axis=1)
-            output_df["ATP"] = pd.concat([ref_model_tc_reduced.loc[:, "ATP"]], axis=1)
-            output_df["UDP"] = pd.concat([ref_model_tc_reduced.loc[:, "UDP"]], axis=1)
-            output_df["UDP_GalNAc"] = pd.concat([ref_model_tc_reduced.loc[:, "UDP_GalNAc"]], axis=1)
-            output_df["Uri"] = pd.concat([ref_model_tc_reduced.loc[:, "Uri"]], axis=1)
-            output_df["AMP"] = pd.concat([ref_model_tc_reduced.loc[:, "AMP"]], axis=1)
-            # add initial species concentrations as first entries in the X_0 columns; GalNAc is not measured, so we assume that is starts with the same concentration as Uri since this is what the experimentalists aim for when setting up the process
-            output_df.loc[0, "GalNAc_0"] = ref_model_tc_reduced.loc[0, 'Uri']
-            output_df.loc[0, "ATP_0"] = ref_model_tc_reduced.loc[0, 'ATP']
-            output_df.loc[0, "ADP_0"] = ref_model_tc_reduced.loc[0, 'ADP']
-            output_df.loc[0, "Uri_0"] = ref_model_tc_reduced.loc[0, 'Uri']
-            # get initial enzyme concentrations from experimental data
-            output_df.loc[0, "E_PPA_0"] = init_conc_dict['E_PPA']
-            output_df.loc[0, "E_PPK3_0"] = init_conc_dict['E_PPK3']
-            output_df.loc[0, "E_UDK_0"] = init_conc_dict['E_UDK']
-            output_df.loc[0, "E_NAHK_0"] = init_conc_dict['E_NAHK']
-            output_df.loc[0, "E_GLMU_0"] = init_conc_dict['E_GLMU']
-            output_df.loc[0, "E_UMPK_0"] = init_conc_dict['E_UMPK']
-            output_list.append(output_df)
-            i = i + 1
-    # export generated normal (index 0) and noisy (index 1) output data
-    for df, file_name in zip(output_list, output_data_file_names):
-        df.to_csv(file_name, na_rep='', sep="\t")
-
-
 def reduce_log_to_unique_entries(evaluated_vars_log):
     """ Go through the evaluation log and merge all duplicate entries (i.e, entries that share the same variant integer matrix). This is necessary since the same variant can be chosen randomly and evaluated at multiple times during the directed optimization process. The resulting reduced log will only contain one entry per variant (with all information from all detected duplicate entries in the original log merged together). The new overall fitness across all duplicates is stored as first entry in a list that is assigned to the key 'fitness'.
     
@@ -1991,33 +1868,6 @@ def replace_substrings(original_string, replacement_dict):
     return result_string
 
 
-"""#TEST
-# load an ImpExtSearch result
-reading_file = open('rep1\\SSO_ImpExtSearch_v22_rep1_output_dict', 'rb')
-output_dict = pickle.load(reading_file)
-reading_file.close()
-
-# analyze single output log
-analysis_result = output_dict['analysis_result']
-# check if there is more than one model variant that achieves the best (lowest) median rank
-if len(analysis_result['best_median_rank']) == 1:
-    # there's only one model variant that achieves the best median rank so it is saved
-    best_ranking_var_log_dict = analysis_result['best_median_rank'][0]
-else:
-    # there's more than one model variant that achieves the best median rank -> select the model that reaches the best (median+mean) rank
-    sum_of_mean_and_median_ranks = analysis_result['fitness_dataframe']['mean_rank']+analysis_result['fitness_dataframe']['median_rank']
-    best_ranking_var_log_dict = output_dict['evaluated_vars_log'][sum_of_mean_and_median_ranks.idxmin()]
-# best median: v22_rep1_MV5 (median rank 6.0)
-# best mean: v22_rep1_MV6 (mean rank 6.3)
-# => select MV5 as it reaches the best median rank
-
-model_name = 'ImpExtSearch_v22_rep1_MV5'
-inputs = ['F_uri', 'F_gn', 'F_polyp'] # feeding substrates
-
-log_entry_dict = best_ranking_var_log_dict
-"""
-
-
 def generate_fedbatch_model_info(model_name, log_entry_dict, inputs, model_data=UDP_GalNAc_model_data, term_libs=UDP_GalNAc_model_term_libs):
     """ Create a Copasi model object from a structural variant and extract information on its structure (species names, stoichiometry, reaction rate laws, kinetic parameter names). Extend this information to build a fed-batch version of the model which includes defined input feeds, dilution terms for all ODE's and an extra ODE for the change of the volume over time. Export this information in a format that can be used by the dynamic fed-batch optimization code (which requires a separate virtual environment and an older Python version to run HILO-MPC).
 
@@ -2159,368 +2009,9 @@ def generate_fedbatch_model_info(model_name, log_entry_dict, inputs, model_data=
 
     return output_dict
 
-
-##TODO: build further convenience functions to analyze logs of evaluated variants:
-##      1) check all variants in the log for whether any of them includes a provided dictionary of 
-##         {reaction: regulation, ...} (variant fragment) and return all associated entries and their 
-##         indices in the log
-
 # ------------------------------------------------------------------------------------------------------ #
 
-# PLOTTING FUNCTIONS (for results of the UDP-GalNAc Model)
-
-##TODO: is there a good way to make these function model-independent?
-
-# plot a single model variant with experimental data
-def plot_struct_var_tcs(var, exp_data_dataframes, exp_ID, exp_name, plot_name, model_data=UDP_GalNAc_model_data, term_libs=UDP_GalNAc_model_term_libs):
-    """ Visualize the performance of a selected structural variant. First, simulate the structural variant for all estimated parameter sets using the initial concentrations of the selected experimental data set. Then, plot the time course trajectories (average +- 95% CI) and add all data points of the selected experimental data sets to the plots.
-    
-    :param var: log entry of the first variant (top plot)
-    :type var: dictionary
-    :param exp_data_dataframes: a list of pandas DataFrames containing experimental data
-    :type exp_data_dataframes: list
-    :param exp_ID: identifier of the selected experiment in the provided list
-    :type exp_ID: integer
-    :param exp_name: name of the selected experiment in the provided list
-    :type exp_name: string
-    :param plot_name: string that is used to create the name of the generated plot
-    :type plot_name: string
-    :param model_data: model-specific function that contains information on the reaction schemes, known literature values for reaction parameters, and placeholder values for all non-zero initial concentrations (default: UDP_GalNAc model)
-    :type model_data: function
-    :param term_libs: model-specific function that contains all potential base rate law equations as well as all potential regulation terms (default: UDP_GalNAc model)
-    :type term_libs: function
-    """
-    # create lists of dictionaries containing the initial concentrations of all experiments (keys: species names, values: initial concentrations)
-    exp_init_conc_dicts = list()
-    for df in exp_data_dataframes:
-        # each data frame has special columns that contain the initial concentrations in row 0 for all relevant species, and they can be identified by their '_0' suffix in the column name
-        init_conc_series = df.filter(regex="_0").iloc[0, :]
-        # convert series into dictionary
-        init_conc_dict = dict()
-        for (idx_string, val) in init_conc_series.items():
-            # remove 'Exp_' prefix, '_0' suffix and square brackets from index string
-            idx_string = idx_string.replace('Exp_', '')
-            idx_string = idx_string.replace('_0', '')
-            idx_string = idx_string.replace('[', '')
-            idx_string = idx_string.replace(']', '')
-            # add a new entry to the dictionary using the index string as key and the initial concentration as value
-            init_conc_dict.update({idx_string: val})
-        # append dictionary to list
-        exp_init_conc_dicts.append(init_conc_dict)
-
-    # SIMULATION
-    # create COPASI model object based on variant 1
-    var_model_obj, _ = create_model_obj_from_struct_var(var['variant'], model_data=model_data, term_libs=term_libs)
-    # run time course simulation with model object set to all sets of estimated parameters
-    var_TC_results_list = []
-    PE_replicate_idx = 0
-    for PE_replicate in tqdm(var['estimation_results']):
-        PE_replicate_tc = sim_model_obj_with_estim_params(var_model_obj, PE_replicate['estimated_parameters'],
-                                                          exp_init_conc_dicts[exp_ID])
-        # add a 'Time' column (generated from data frame index)
-        PE_replicate_tc['Time'] = PE_replicate_tc.index
-        # add a 'PE_replicate' column
-        PE_replicate_tc['PE_replicate'] = [PE_replicate_idx for i in range(len(list(PE_replicate_tc.index)))]
-        # remove 'Values[X]' columns (global quantities that I don't need here)
-        PE_replicate_tc.drop(list(PE_replicate_tc.filter(regex='Values')),
-                             axis=1, inplace=True)
-        # collect simulation data frame
-        var_TC_results_list.append(PE_replicate_tc)
-        PE_replicate_idx = PE_replicate_idx + 1
-    # concatenate all data frames
-    var_TC_results_merged_df = pd.concat(var_TC_results_list)
-    # define the column order (the column order of the time course data frames returned by basico is not reliable)
-    var_TC_results_merged_df = var_TC_results_merged_df.reindex(
-        columns=[ "Uri", "UMP", "UDP", "UTP", "UDP_GalNAc", 
-                  "AMP", "ADP", "ATP", "ATPP", 
-                  "P", "PP", "PolyP", "GalNAc", "GalNAc1P",
-                  "Time", "PE_replicate"])
-
-    # MULTIPLOT
-    # create seaborn line plots from simulated result data frame (separate plots for uridine-based, GalNAc and GalNAc1p, and adenosine-based species)
-    fig, axs = plt.subplots(1, 3, figsize=(16,9), layout='constrained')
-    scatterplot_marker_size = 20
-    # 1) plots of variant 1 (multiplot row index 0); reshape data frame from wide to long format for plotting of simulated results with error bands
-    var_TC_results_list_merged_longform = pd.DataFrame(columns=['PE_replicate', 'Time', 'Species', 'Concentration'])
-    var_TC_results_list_merged_longform['PE_replicate'] = pd.concat(
-        [pd.Series(var_TC_results_merged_df['PE_replicate']).repeat(len(var_TC_results_merged_df.columns) - 2)],
-        axis=0)
-    var_TC_results_list_merged_longform = var_TC_results_list_merged_longform.reset_index(drop=True)
-    # since the merged data frame in wide format has two extra columns ('Time' and 'PE_replicate'): repeat(n-2), we only want the length of the species columns
-    var_TC_results_list_merged_longform['Time'] = pd.concat(
-        [pd.Series(var_TC_results_merged_df.index).repeat(len(var_TC_results_merged_df.columns) - 2)], axis=0,
-        ignore_index=True)
-    var_TC_results_list_merged_longform['Species'] = pd.concat(
-        [pd.Series(list(var_TC_results_merged_df.columns[0:-2]) * len(var_TC_results_merged_df.index))], axis=0,
-        ignore_index=True)
-    var_TC_results_list_merged_longform['Concentration'] = pd.concat([var_TC_results_merged_df.iloc[i, 0:-2]
-                                                                       for i in
-                                                                       range(len(var_TC_results_merged_df.index))],
-                                                                      axis=0, ignore_index=True)
-    # plot the mean and 95% confidence interval by aggregating over PE replicates (at each time point)
-    sns.lineplot(data=var_TC_results_list_merged_longform[
-        var_TC_results_list_merged_longform.Species.isin(['Uri', 'UMP', 'UDP', 'UTP', 'UDP_GalNAc'])],
-                 x="Time", y="Concentration", hue="Species", ax=axs[0],
-                 palette=[sns.color_palette("Set1")[0], sns.color_palette("Set1")[1], sns.color_palette("Set1")[2],
-                          sns.color_palette("Set1")[3], sns.color_palette("Set1")[4]])
-    sns.lineplot(data=var_TC_results_list_merged_longform[
-        var_TC_results_list_merged_longform.Species.isin(['GalNAc', 'GalNAc1P'])],
-                 x="Time", y="Concentration", hue="Species", ax=axs[1],
-                 palette=[sns.color_palette("Set1")[0], sns.color_palette("Set1")[1]])
-    sns.lineplot(data=var_TC_results_list_merged_longform[
-        var_TC_results_list_merged_longform.Species.isin(['AMP', 'ADP', 'ATP', 'ATPP'])],
-                 x="Time", y="Concentration", hue="Species", ax=axs[2],
-                 palette=[sns.color_palette("Set1")[0], sns.color_palette("Set1")[1], sns.color_palette("Set1")[2],
-                          sns.color_palette("Set1")[3]])
-    # add experimental data points
-    sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y='[Uri]', ax=axs[0],
-                    color=sns.color_palette("Set1")[0], s=scatterplot_marker_size)
-    sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y='[UMP]', ax=axs[0],
-                    color=sns.color_palette("Set1")[1], s=scatterplot_marker_size)
-    sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y='[UDP]', ax=axs[0],
-                    color=sns.color_palette("Set1")[2], s=scatterplot_marker_size)
-    sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y='[UTP]', ax=axs[0],
-                    color=sns.color_palette("Set1")[3], s=scatterplot_marker_size)
-    sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y='[UDP_GalNAc]', ax=axs[0],
-                    color=sns.color_palette("Set1")[4], s=scatterplot_marker_size)
-    sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y='[AMP]', ax=axs[2],
-                    color=sns.color_palette("Set1")[0], s=scatterplot_marker_size)
-    sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y='[ADP]', ax=axs[2],
-                    color=sns.color_palette("Set1")[1], s=scatterplot_marker_size)
-    sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y='[ATP]', ax=axs[2],
-                    color=sns.color_palette("Set1")[2], s=scatterplot_marker_size)
-    sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y='[ATPP]', ax=axs[2],
-                    color=sns.color_palette("Set1")[3], s=scatterplot_marker_size)
-    # overwrite axis labels which were automatically generated from data frame column names
-    axs[0].set(xlabel='Time [h]', ylabel='Concentration [mM]')
-    axs[1].set(xlabel='Time [h]', ylabel='Concentration [mM]')
-    axs[2].set(xlabel='Time [h]', ylabel='Concentration [mM]')
-    # save the plot and the associated time course simulation data 
-    file_name = plot_name + '_Data' + exp_name
-    plt.savefig(file_name + '_tc_plot.png', dpi=200)
-    storage_file = open(file_name + '_TC_results.pkl', 'wb')
-    pickle.dump(var_TC_results_merged_df, storage_file)
-    storage_file.close()
-
-
-# plot variants in separate rows of a multi plot with experimental data
-def compare_struct_var_tcs(var1, var2, exp_data_dataframes, exp_ID, exp_name, plot_name, model_data=UDP_GalNAc_model_data, term_libs=UDP_GalNAc_model_term_libs):
-    """ Visualize the performance of two selected structural variants. First, simulate both structural variants for all estimated parameter sets using the initial concentrations of the selected experimental data set. Then, plot the time course trajectories (average +- 95% CI) and add all data points of the selected experimental data sets to the plots.
-    
-    :param var1: log entry of the first variant (top plot)
-    :type var1: dictionary
-    :param var2: log entry of the second variant (bottom plot)
-    :type var2: dictionary
-    :param exp_data_dataframes: a list of pandas DataFrames containing experimental data
-    :type exp_data_dataframes: list
-    :param exp_ID: identifier of the selected experiment in the provided list
-    :type exp_ID: integer
-    :param exp_name: name of the selected experiment in the provided list
-    :type exp_name: string
-    :param plot_name: string that is used to create the name of the generated plot
-    :type plot_name: string
-    :param model_data: model-specific function that contains information on the reaction schemes, known literature values for reaction parameters, and placeholder values for all non-zero initial concentrations (default: UDP_GalNAc model)
-    :type model_data: function
-    :param term_libs: model-specific function that contains all potential base rate law equations as well as all potential regulation terms (default: UDP_GalNAc model)
-    :type term_libs: function
-    """
-    # create lists of dictionaries containing the initial concentrations of all experiments (keys: species names, values: initial concentrations)
-    exp_init_conc_dicts = list()
-    for df in exp_data_dataframes:
-        # each data frame has special columns that contain the initial concentrations in row 0 for all relevant species, and they can be identified by their '_0' suffix in the column name
-        init_conc_series = df.filter(regex="_0").iloc[0, :]
-        # convert series into dictionary
-        init_conc_dict = dict()
-        for (idx_string, val) in init_conc_series.items():
-            # remove 'Exp_' prefix, '_0' suffix and square brackets from index string
-            idx_string = idx_string.replace('Exp_', '')
-            idx_string = idx_string.replace('_0', '')
-            idx_string = idx_string.replace('[', '')
-            idx_string = idx_string.replace(']', '')
-            # add a new entry to the dictionary using the index string as key and the initial concentration as value
-            init_conc_dict.update({idx_string: val})
-        # append dictionary to list
-        exp_init_conc_dicts.append(init_conc_dict)
-
-    # -###########################################################################
-    # VARIANT 1 SIMULATION
-    # create COPASI model object based on variant 1
-    var1_model_obj, _ = create_model_obj_from_struct_var(var1['variant'], model_data=model_data, term_libs=term_libs)
-    # run time course simulation with model object set to all sets of estimated parameters
-    var1_TC_results_list = []
-    PE_replicate_idx = 0
-    for PE_replicate in tqdm(var1['estimation_results']):
-        PE_replicate_tc = sim_model_obj_with_estim_params(var1_model_obj, PE_replicate['estimated_parameters'],
-                                                          exp_init_conc_dicts[exp_ID])
-        # add a 'Time' column (generated from data frame index)
-        PE_replicate_tc['Time'] = PE_replicate_tc.index
-        # add a 'PE_replicate' column
-        PE_replicate_tc['PE_replicate'] = [PE_replicate_idx for i in range(len(list(PE_replicate_tc.index)))]
-        # remove 'Values[X]' columns (global quantities that I don't need here)
-        PE_replicate_tc.drop(list(PE_replicate_tc.filter(regex='Values')),
-                             axis=1, inplace=True)
-        # collect simulation data frame
-        var1_TC_results_list.append(PE_replicate_tc)
-        PE_replicate_idx = PE_replicate_idx + 1
-    # concatenate all data frames
-    var1_TC_results_merged_df = pd.concat(var1_TC_results_list)
-    # define the column order (the column order of the time course data frames 
-    # returned by basico are not reliable)
-    var1_TC_results_merged_df = var1_TC_results_merged_df.reindex(
-        columns=[ "Uri", "UMP", "UDP", "UTP", "UDP_GalNAc", 
-                  "AMP", "ADP", "ATP", "ATPP", 
-                  "P", "PP", "PolyP", "GalNAc", "GalNAc1P",
-                  "Time", "PE_replicate"])
-    # -###########################################################################
-    # VARIANT 2 SIMULATION
-    # create COPASI model object based on variant 2
-    var2_model_obj, _ = create_model_obj_from_struct_var(var2['variant'], model_data=model_data, term_libs=term_libs)
-    # run time course simulation with model object set to all sets of estimated parameters
-    var2_TC_results_list = []
-    PE_replicate_idx = 0
-    for PE_replicate in tqdm(var2['estimation_results']):
-        PE_replicate_tc = sim_model_obj_with_estim_params(var2_model_obj, PE_replicate['estimated_parameters'],
-                                                          exp_init_conc_dicts[exp_ID])
-        # add a 'Time' column (generated from data frame index)
-        PE_replicate_tc['Time'] = PE_replicate_tc.index
-        # add a 'PE_replicate' column
-        PE_replicate_tc['PE_replicate'] = [PE_replicate_idx for i in range(len(list(PE_replicate_tc.index)))]
-        # remove 'Values[X]' columns (global quantities that I don't need here)
-        PE_replicate_tc.drop(list(PE_replicate_tc.filter(regex='Values')),
-                             axis=1, inplace=True)
-        # collect simulation data frame
-        var2_TC_results_list.append(PE_replicate_tc)
-        PE_replicate_idx = PE_replicate_idx + 1
-    # concatenate all data frames
-    var2_TC_results_merged_df = pd.concat(var2_TC_results_list)
-    # define the column order (the column order of the time course data frames returned by basico are not reliable)
-    var2_TC_results_merged_df = var2_TC_results_merged_df.reindex(
-        columns=[ "Uri", "UMP", "UDP", "UTP", "UDP_GalNAc", 
-                  "AMP", "ADP", "ATP", "ATPP", 
-                  "P", "PP", "PolyP", "GalNAc", "GalNAc1P",
-                  "Time", "PE_replicate"])
-    # -###########################################################################
-    # MULTIPLOT
-    # create seaborn line plots from simulated result data frame (separate plots for uridine-based and adenosine-based species) for variant 1 (multi plot row index 0) and variant 2 (multi plot row index 1)
-    fig, axs = plt.subplots(2, 3, figsize=(16,9), layout='constrained')
-    scatterplot_marker_size = 20
-    # 1) plots of variant 1 (multiplot row index 0); reshape data frame from wide to long format for plotting of simulated results with error bands
-    var1_TC_results_list_merged_longform = pd.DataFrame(columns=['PE_replicate', 'Time', 'Species', 'Concentration'])
-    var1_TC_results_list_merged_longform['PE_replicate'] = pd.concat(
-        [pd.Series(var1_TC_results_merged_df['PE_replicate']).repeat(len(var1_TC_results_merged_df.columns) - 2)],
-        axis=0)
-    var1_TC_results_list_merged_longform = var1_TC_results_list_merged_longform.reset_index(drop=True)
-    # since the merged data frame in wide format has two extra columns ('Time' and 'PE_replicate'): repeat(n-2), we only want the length of the species columns
-    var1_TC_results_list_merged_longform['Time'] = pd.concat(
-        [pd.Series(var1_TC_results_merged_df.index).repeat(len(var1_TC_results_merged_df.columns) - 2)], axis=0,
-        ignore_index=True)
-    var1_TC_results_list_merged_longform['Species'] = pd.concat(
-        [pd.Series(list(var1_TC_results_merged_df.columns[0:-2]) * len(var1_TC_results_merged_df.index))], axis=0,
-        ignore_index=True)
-    var1_TC_results_list_merged_longform['Concentration'] = pd.concat([var1_TC_results_merged_df.iloc[i, 0:-2]
-                                                                       for i in
-                                                                       range(len(var1_TC_results_merged_df.index))],
-                                                                      axis=0, ignore_index=True)
-    # plot the mean and 95% confidence interval by aggregating over PE replicates (at each time point)
-    sns.lineplot(data=var1_TC_results_list_merged_longform[
-        var1_TC_results_list_merged_longform.Species.isin(['Uri', 'UMP', 'UDP', 'UTP', 'UDP_GalNAc'])],
-                 x="Time", y="Concentration", hue="Species", ax=axs[0, 0],
-                 palette=[sns.color_palette("Set1")[0], sns.color_palette("Set1")[1], sns.color_palette("Set1")[2],
-                          sns.color_palette("Set1")[3], sns.color_palette("Set1")[4]])
-    sns.lineplot(data=var1_TC_results_list_merged_longform[
-        var1_TC_results_list_merged_longform.Species.isin(['GalNAc', 'GalNAc1P'])],
-                 x="Time", y="Concentration", hue="Species", ax=axs[0, 1],
-                 palette=[sns.color_palette("Set1")[0], sns.color_palette("Set1")[1]])
-    sns.lineplot(data=var1_TC_results_list_merged_longform[
-        var1_TC_results_list_merged_longform.Species.isin(['AMP', 'ADP', 'ATP', 'ATPP'])],
-                 x="Time", y="Concentration", hue="Species", ax=axs[0, 2],
-                 palette=[sns.color_palette("Set1")[0], sns.color_palette("Set1")[1], sns.color_palette("Set1")[2],
-                          sns.color_palette("Set1")[3]])
-    # add experimental data points
-    sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y='[Uri]', ax=axs[0, 0],
-                    color=sns.color_palette("Set1")[0], s=scatterplot_marker_size)
-    sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y='[UMP]', ax=axs[0, 0],
-                    color=sns.color_palette("Set1")[1], s=scatterplot_marker_size)
-    sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y='[UDP]', ax=axs[0, 0],
-                    color=sns.color_palette("Set1")[2], s=scatterplot_marker_size)
-    sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y='[UTP]', ax=axs[0, 0],
-                    color=sns.color_palette("Set1")[3], s=scatterplot_marker_size)
-    sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y='[UDP_GalNAc]', ax=axs[0, 0],
-                    color=sns.color_palette("Set1")[4], s=scatterplot_marker_size)
-    sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y='[AMP]', ax=axs[0, 1],
-                    color=sns.color_palette("Set1")[0], s=scatterplot_marker_size)
-    sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y='[ADP]', ax=axs[0, 1],
-                    color=sns.color_palette("Set1")[1], s=scatterplot_marker_size)
-    sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y='[ATP]', ax=axs[0, 1],
-                    color=sns.color_palette("Set1")[2], s=scatterplot_marker_size)
-    sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y='[ATPP]', ax=axs[0, 1],
-                    color=sns.color_palette("Set1")[3], s=scatterplot_marker_size)
-    # 2) plots of variant 2 (multiplot row index 1); reshape data frame from wide to long format for plotting of simulated results with error bands
-    var2_TC_results_list_merged_longform = pd.DataFrame(columns=['PE_replicate', 'Time', 'Species', 'Concentration'])
-    var2_TC_results_list_merged_longform['PE_replicate'] = pd.concat(
-        [pd.Series(var2_TC_results_merged_df['PE_replicate']).repeat(len(var2_TC_results_merged_df.columns) - 2)],
-        axis=0)
-    var2_TC_results_list_merged_longform = var2_TC_results_list_merged_longform.reset_index(drop=True)
-    # since the merged data frame in wide format has two extra columns ('Time' and 'PE_replicate'): repeat(n-2), we only want the length of the species columns
-    var2_TC_results_list_merged_longform['Time'] = pd.concat(
-        [pd.Series(var2_TC_results_merged_df.index).repeat(len(var2_TC_results_merged_df.columns) - 2)], axis=0,
-        ignore_index=True)
-    var2_TC_results_list_merged_longform['Species'] = pd.concat(
-        [pd.Series(list(var2_TC_results_merged_df.columns[0:-2]) * len(var2_TC_results_merged_df.index))], axis=0,
-        ignore_index=True)
-    var2_TC_results_list_merged_longform['Concentration'] = pd.concat([var2_TC_results_merged_df.iloc[i, 0:-2]
-                                                                       for i in
-                                                                       range(len(var2_TC_results_merged_df.index))],
-                                                                      axis=0, ignore_index=True)
-    # plot the mean and 95% confidence interval by aggregating over PE replicates (at each time point)
-    sns.lineplot(data=var2_TC_results_list_merged_longform[
-        var2_TC_results_list_merged_longform.Species.isin(['Uri', 'UMP', 'UDP', 'UTP', 'UDP_GalNAc'])],
-                 x="Time", y="Concentration", hue="Species", ax=axs[1, 0],
-                 palette=[sns.color_palette("Set1")[0], sns.color_palette("Set1")[1], sns.color_palette("Set1")[2],
-                          sns.color_palette("Set1")[3], sns.color_palette("Set1")[4]])
-    sns.lineplot(data=var2_TC_results_list_merged_longform[
-        var2_TC_results_list_merged_longform.Species.isin(['GalNAc', 'GalNAc1P'])],
-                 x="Time", y="Concentration", hue="Species", ax=axs[1, 1],
-                 palette=[sns.color_palette("Set1")[0], sns.color_palette("Set1")[1]])
-    sns.lineplot(data=var2_TC_results_list_merged_longform[
-        var2_TC_results_list_merged_longform.Species.isin(['AMP', 'ADP', 'ATP', 'ATPP'])],
-                 x="Time", y="Concentration", hue="Species", ax=axs[1, 2],
-                 palette=[sns.color_palette("Set1")[0], sns.color_palette("Set1")[1], sns.color_palette("Set1")[2],
-                          sns.color_palette("Set1")[3]])
-    # add experimental data points
-    sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y='[Uri]', ax=axs[1, 0],
-                    color=sns.color_palette("Set1")[0], s=scatterplot_marker_size)
-    sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y='[UMP]', ax=axs[1, 0],
-                    color=sns.color_palette("Set1")[1], s=scatterplot_marker_size)
-    sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y='[UDP]', ax=axs[1, 0],
-                    color=sns.color_palette("Set1")[2], s=scatterplot_marker_size)
-    sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y='[UTP]', ax=axs[1, 0],
-                    color=sns.color_palette("Set1")[3], s=scatterplot_marker_size)
-    sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y='[UDP_GalNAc]', ax=axs[1, 0],
-                    color=sns.color_palette("Set1")[4], s=scatterplot_marker_size)
-    sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y='[AMP]', ax=axs[1, 1],
-                    color=sns.color_palette("Set1")[0], s=scatterplot_marker_size)
-    sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y='[ADP]', ax=axs[1, 1],
-                    color=sns.color_palette("Set1")[1], s=scatterplot_marker_size)
-    sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y='[ATP]', ax=axs[1, 1],
-                    color=sns.color_palette("Set1")[2], s=scatterplot_marker_size)
-    sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y='[ATPP]', ax=axs[1, 1],
-                    color=sns.color_palette("Set1")[3], s=scatterplot_marker_size)
-    # overwrite axis labels which were automatically generated from data frame column names
-    axs[0, 0].set(xlabel='Time [h]', ylabel='Concentration [mM]')
-    axs[0, 1].set(xlabel='Time [h]', ylabel='Concentration [mM]')
-    axs[0, 2].set(xlabel='Time [h]', ylabel='Concentration [mM]')
-    axs[1, 0].set(xlabel='Time [h]', ylabel='Concentration [mM]')
-    axs[1, 1].set(xlabel='Time [h]', ylabel='Concentration [mM]')
-    axs[1, 2].set(xlabel='Time [h]', ylabel='Concentration [mM]')
-    # save the plot and the associated time course simulation data 
-    file_name = plot_name + '_Data' + exp_name
-    plt.savefig(file_name + '_Comparison.png', dpi=200)
-    list_of_TC_results = [var1_TC_results_merged_df, var2_TC_results_merged_df]
-    storage_file = open(file_name + '_TC_results.pkl', 'wb')
-    pickle.dump(list_of_TC_results, storage_file)
-    storage_file.close()
-
+# PLOTTING FUNCTION (for results of the UDP-GalNAc Model)
 
 # plot variants on top of each other in the same plot (differentiated by line style) with experimental data
 def compare_struct_var_tcs_merged(var1, var2, exp_data_dataframes, exp_ID, exp_name, plot_name, model_data=UDP_GalNAc_model_data, term_libs=UDP_GalNAc_model_term_libs):
@@ -2665,7 +2156,7 @@ def compare_struct_var_tcs_merged(var1, var2, exp_data_dataframes, exp_ID, exp_n
     # -###########################################################################
     # MULTIPLOT
     # create seaborn line plots from simulated result data frame (separate plots for uridine-based, GalNAc and GalNAc1p, and adenosine-based species) for variant 1 (multi plot row index 0, line style solid) and variant 2 (multi plot row index 0, line style dashed); for the simulation results: plot the mean and 95% confidence interval by aggregating over PE replicates (at each time point)
-    fig, axs = plt.subplots(1, 3, figsize=(16,7), layout='constrained')
+    fig, axs = plt.subplots(1, 3, figsize=(16,9), layout='constrained')
     scatterplot_marker_size = 20
     # define the species groups for each subplot
     species_groups = [['Uri', 'UMP', 'UDP', 'UTP', 'UDP_GalNAc'],
@@ -2690,12 +2181,7 @@ def compare_struct_var_tcs_merged(var1, var2, exp_data_dataframes, exp_ID, exp_n
                 sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y=f'[{species}]', ax=ax,
                                 color=colors[i][j], s=scatterplot_marker_size, label=f'{species}')
         # create custom legend
-        legend_elements = list()
-        for j, species in enumerate(species_groups[i]):
-            # replace underscores with dashes if they show up in the species name 
-            if '_' in species:
-                species = species.replace('_', '-')
-            legend_elements.append(Patch(facecolor=colors[i][j], label=species))
+        legend_elements = [Patch(facecolor=colors[i][j], label=species) for j, species in enumerate(species_groups[i])]
         ax.legend(handles=legend_elements, frameon=True)
     # overwrite axis labels which were automatically generated from data frame column names
     axs[0].set(xlabel='Time [h]', ylabel='Concentration [mM]')
@@ -2709,117 +2195,3 @@ def compare_struct_var_tcs_merged(var1, var2, exp_data_dataframes, exp_ID, exp_n
     storage_file.close()
 
 
-##TODO: update the logic of this function (more and different combinations of indices are possible now)
-def compare_occurrence_heatmaps(top_quartile, bottom_quartile, bestX_struct_vars, worstX_struct_vars):
-    """ Visualize the occurrence of base and regulation terms of the best and worst variants which are selected from provided top and a bottom quartiles of the fitness distribution.
-
-    :param top_quartile: top quartile cut-off (0% - X%)
-    :type top_quartile: float
-    :param bottom_quartile: bottom quartile starting point (X% - 100%)
-    :type bottom_quartile: float
-    :param bestX_struct_vars: top slice of the sorted log of evaluated variants (based on the top quartile cut-off)
-    :type bestX_struct_vars: list
-    :param worstX_struct_vars: bottom slice of the sorted log of evaluated variants (based on the bottom quartile starting point)
-    :type worstX_struct_vars: list
-    """
-
-    # -###########################################################################
-    # PREPARATION OF DATA FRAMES AND COUNTING OF TERMS
-    # initialize occurrence data frames (basis of heat map)
-    reg_term_occurrence_df_best = pd.DataFrame(np.zeros([9, 23]))
-    reg_term_occurrence_df_best.columns = ['Base_active', '(1)ADP_Act', '(2)ADP_Inhib', '(3)AMP_Act', '(4)AMP_Inhib',
-                                           '(5)ATP_Act', '(6)ATP_Inhib', '(7)GalNAc_Act',
-                                           '(8)GalNAc_Inhib', '(9)P_Act', '(10)P_Inhib', '(11)PP_Act', '(12)PP_Inhib',
-                                           '(13)UDP_Act', '(14)UDP_Inhib', '(15)UDP_GalNAc_Act',
-                                           '(16)UDP_GalNAc_Inhib', '(17)UMP_Act', '(18)UMP_Inhib', '(19)Uri_Act',
-                                           '(20)Uri_Inhib', '(21)UTP_Act', '(22)UTP_Inhib']
-    reg_term_occurrence_df_best.set_index(
-        pd.Index(['ADP_Decay', 'GLMU', 'NAHK', 'PPA', 'PPK3_A', 'PPK3_U', 'UDK_UMP', 'UDK_Uri', 'UMPK']), inplace=True)
-    reg_term_occurrence_df_worst = pd.DataFrame(np.zeros([9, 23]))
-    reg_term_occurrence_df_worst.columns = ['Base_active', '(1)ADP_Act', '(2)ADP_Inhib', '(3)AMP_Act', '(4)AMP_Inhib',
-                                            '(5)ATP_Act', '(6)ATP_Inhib', '(7)GalNAc_Act',
-                                            '(8)GalNAc_Inhib', '(9)P_Act', '(10)P_Inhib', '(11)PP_Act', '(12)PP_Inhib',
-                                            '(13)UDP_Act', '(14)UDP_Inhib', '(15)UDP_GalNAc_Act',
-                                            '(16)UDP_GalNAc_Inhib', '(17)UMP_Act', '(18)UMP_Inhib', '(19)Uri_Act',
-                                            '(20)Uri_Inhib', '(21)UTP_Act', '(22)UTP_Inhib']
-    reg_term_occurrence_df_worst.set_index(
-        pd.Index(['ADP_Decay', 'GLMU', 'NAHK', 'PPA', 'PPK3_A', 'PPK3_U', 'UDK_UMP', 'UDK_Uri', 'UMPK']), inplace=True)
-    # concatenate all integer arrays of the top best X and worst X structural variants horizontally
-    bestX_struct_var_arrays_merged = pd.concat([bestX_struct_vars[i]['variant'] for i in range(len(bestX_struct_vars))],
-                                               axis=1)
-    worstX_struct_var_arrays_merged = pd.concat(
-        [worstX_struct_vars[i]['variant'] for i in range(len(worstX_struct_vars))], axis=1)
-    # count occurrence of all reg. terms for each row (= reaction) of the merged array of the regulation term columns all top X and worst X structural variants
-    best_df_row_idx = 0
-    for idx, row in bestX_struct_var_arrays_merged.iterrows():
-        # count occurrence of all base terms; we only care about whether they are on (index 1)
-        reg_term_occurrence_df_best.iloc[best_df_row_idx, 0] = list(row).count(1)
-        # count occurrence of all reg. terms; 22 possible reg. terms (IDs: 1 to 22)
-        for i in range(1, 23):
-            # store count directly in occurrence data frame
-            reg_term_occurrence_df_best.iloc[best_df_row_idx, i] = list(row.drop(labels=['base'])).count(i)
-        best_df_row_idx = best_df_row_idx + 1
-    worst_df_row_idx = 0
-    for idx, row in worstX_struct_var_arrays_merged.iterrows():
-        # count occurrence of all base terms; we only care about whether they are (index 1)
-        reg_term_occurrence_df_worst.iloc[worst_df_row_idx, 0] = list(row).count(1)
-        # count occurrence of all reg. terms; 22 possible reg. terms (IDs: 1 to 22)
-        for i in range(1, 23):
-            # store count directly in occurrence data frame
-            reg_term_occurrence_df_worst.iloc[worst_df_row_idx, i] = list(row.drop(labels=['base'])).count(i)
-        worst_df_row_idx = worst_df_row_idx + 1
-    # create data frame of absolute differences (best-worst)
-    reg_term_diffs_df = reg_term_occurrence_df_best - reg_term_occurrence_df_worst
-    # create data frame of percentage differences (abs(best-worst)/avg(best, worst))
-    reg_term_percentage_diffs_df = (np.abs(reg_term_occurrence_df_best - reg_term_occurrence_df_worst) / (
-                (reg_term_occurrence_df_best + reg_term_occurrence_df_worst) / 2)) * 100
-    # -###########################################################################
-    # MULTIPLOT
-    # visualize occurrence data frame as seaborn heat map with annotations (color 'k' = black, from 'key')
-    fig, axs = plt.subplots(2, 2, layout='constrained')
-    bestX_occurrence_hm = sns.heatmap(reg_term_occurrence_df_best, cmap='Reds',
-                                      cbar=False, xticklabels=1, yticklabels=1,
-                                      vmin=0, vmax=len(bestX_struct_vars),
-                                      annot=True, annot_kws={'size': 9},
-                                      fmt='.0f', square=True, ax=axs[0, 0])
-    worstX_occurrence_hm = sns.heatmap(reg_term_occurrence_df_worst, cmap='Reds',
-                                       cbar=False, xticklabels=1, yticklabels=1,
-                                       vmin=0, vmax=len(worstX_struct_vars),
-                                       annot=True, annot_kws={'size': 9},
-                                       fmt='.0f', square=True, ax=axs[0, 1])
-    # for differences heatmap the boundaries of the color map need to be set to the highest value that can be found in both bestX and worstX data frames
-    diffs_hm_cmap_boundary = max(reg_term_occurrence_df_best.values.max(), reg_term_occurrence_df_worst.values.max())
-    diffs_hm = sns.heatmap(reg_term_diffs_df, cmap='vlag',
-                           cbar=False, xticklabels=1, yticklabels=1,
-                           vmin=-diffs_hm_cmap_boundary, vmax=diffs_hm_cmap_boundary,
-                           annot=True, annot_kws={'size': 9},
-                           fmt='.0f', square=True, ax=axs[1, 0])
-    # percentage differences between 0 and 0 are NaN and therefore not shown in the heat map (we could replace all NaN values in the data frame with .fillna(0))
-    percentage_diffs_hm = sns.heatmap(reg_term_percentage_diffs_df, cmap='vlag',
-                                      cbar=False, xticklabels=1, yticklabels=1,
-                                      vmin=reg_term_percentage_diffs_df.fillna(0).values.min(),
-                                      vmax=reg_term_percentage_diffs_df.fillna(0).values.max(),
-                                      annot=True, annot_kws={'size': 9, 'color': 'k'},
-                                      fmt='.1f', square=True, ax=axs[1, 1])
-    # set sub plot titles
-    axs[0, 0].set_title(
-        'Occurrence of Base and Regulation Terms (Top ' + str(int(top_quartile * 100)) + str("%") + ', ' + str(
-            len(bestX_struct_vars)) + ' Variants)')
-    axs[0, 1].set_title(
-        'Occurrence of Base and Regulation Terms (Worst ' + str(int(np.round(1 - bottom_quartile, 2) * 100)) + str(
-            "%") + ', ' + str(len(worstX_struct_vars)) + ' Variants)')
-    axs[1, 0].set_title('Differences between Best and Worst Variants')
-    axs[1, 1].set_title('Percentage Differences between Best and Worst Variants')
-    # set font size of x-axis and y-axis tick labels
-    axs[0, 0].set_xticklabels(axs[0, 0].get_xticklabels(), size=7)
-    axs[0, 0].set_yticklabels(axs[0, 0].get_yticklabels(), size=7)
-    axs[0, 1].set_xticklabels(axs[0, 1].get_xticklabels(), size=7)
-    axs[0, 1].set_yticklabels(axs[0, 1].get_yticklabels(), size=7)
-    axs[1, 0].set_xticklabels(axs[1, 0].get_xticklabels(), size=7)
-    axs[1, 0].set_yticklabels(axs[1, 0].get_yticklabels(), size=7)
-    axs[1, 1].set_xticklabels(axs[1, 1].get_xticklabels(), size=7)
-    axs[1, 1].set_yticklabels(axs[1, 1].get_yticklabels(), size=7)
-    # add shared horizontal color bar
-    # mappable = bestX_occurrence_hm.get_children()[0]
-    # plt.colorbar(mappable, ax = [axs[0], axs[1]], orientation='horizontal')
-    plt.show()
