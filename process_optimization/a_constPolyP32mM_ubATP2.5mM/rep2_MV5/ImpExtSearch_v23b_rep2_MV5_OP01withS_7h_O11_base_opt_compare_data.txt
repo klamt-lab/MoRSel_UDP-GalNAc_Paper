@@ -12,5 +12,5 @@ ATP          ATP       0.5   2.464851
 Uri          Uri      50.0  50.000000
 titers_abs : {'baseline': np.float64(25.758816), 'optimized': np.float64(37.27985394)}
 titers_rel : {'baseline': np.float64(48.60154020585998), 'optimized': np.float64(70.44897824769997)}
-yields_abs : {'baseline': np.float64(0.51517632), 'optimized': np.float64(0.7455970788)}
-yields_rel : {'baseline': np.float64(0.9720308041171998), 'optimized': np.float64(1.4089795649539993)}
+yields_abs : {'baseline': np.float64(51.517632), 'optimized': np.float64(74.55970788)}
+yields_rel : {'baseline': np.float64(97.20308041171997), 'optimized': np.float64(140.89795649539994)}

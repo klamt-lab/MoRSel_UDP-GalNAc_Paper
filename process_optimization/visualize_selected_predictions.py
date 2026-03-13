@@ -250,7 +250,10 @@ def visualize_predTC_withValData(model_path, fits_data_path, best_opt_result_pat
                                 capsize=3,
                                 label='Validation')
             # set subplot title to species name
-            ax_obj.set_title(species_name, fontsize=font_size, loc='center')
+            if species_name == 'UDP_GalNAc':
+                ax_obj.set_title('UDP-GalNAc', fontsize=font_size, loc='center')
+            else:
+                ax_obj.set_title(species_name, fontsize=font_size, loc='center')
             # set x-axis ticks
             ax_obj.set_xticks([0, 4, 8, 12, 16, 20, 24])
             ax_obj.tick_params(axis='x')
@@ -278,15 +281,19 @@ def visualize_predTC_withValData(model_path, fits_data_path, best_opt_result_pat
     # save the plot
     plt.savefig(f'{result_file_path}_plot.png', bbox_inches="tight", dpi=300)
 
-def plot_base_opt_process_comparison(baseline_exp_data_path, best_opt_result_path, exp_val_data_path, titer_and_yield_timepoint, result_file_path):
+def plot_base_opt_process_comparison(baseline_exp_data_path, baseline_exp_biol_repl_data_path, best_opt_result_path, val_exp_data_path, val_exp_biol_repl_data_path, titer_and_yield_timepoint, result_file_path):
     """Plot initial enzyme and substrate concentrations as well as various relevant performance indicators (enzyme load, product titer, yield) of the unoptimized baseline experiment and the validation experiment which was performed to test the best scoring batch optimization result.
 
-    :param baseline_exp_data_path: path to the baseline experiment data
+    :param baseline_exp_data_path: path to the baseline experiment data (average values across three biological replicates)
     :type baseline_exp_data_path: string
+    :type baseline_exp_biol_repl_data_path: path to the baseline experiment data (selected data points of all three biol. replicates)
+    :param baseline_exp_biol_repl_data_path: string
     :param best_opt_result_path: path to the best scoring optimization result
     :type best_opt_result_path: string
-    :param exp_val_data_path: path to the validation experiment data
-    :type exp_val_data_path: string
+    :param val_exp_data_path: path to the validation experiment data (average values across three biological replicates)
+    :type val_exp_data_path: string
+    :type val_exp_biol_repl_data_path: path to the validation experiment data (selected data points of all three biol. replicates)
+    :param val_exp_biol_repl_data_path: string
     :param titer_and_yield_timepoint: the time point where titers and yields are calculated
     :type titer_and_yield_timepoint: integer
     :param result_file_path: path of the output file
@@ -294,24 +301,21 @@ def plot_base_opt_process_comparison(baseline_exp_data_path, best_opt_result_pat
     """
 
     # LOAD DATA
-
     # load selected optimization result and get start (baseline) and predicted (optimized) initial concentrations
     with open(best_opt_result_path, 'rb') as pickle_file:
         opt_result = pickle.load(pickle_file)
     opt_result_start_init_conc = opt_result['opt_result'][0]['start']
     opt_result_pred_init_conc = opt_result['opt_result'][0]['sol']
 
-    # load data of baseline and validation experiments
+    # load data of baseline and validation experiments to get the measured titers (data points are averages across three biological replicates)
     baseline_data_df_raw = pd.read_csv(baseline_exp_data_path, sep='\t')
-    val_data_df_raw = pd.read_csv(exp_val_data_path, sep='\t')
+    val_data_df_raw = pd.read_csv(val_exp_data_path, sep='\t')
+
+    # load data of the baseline and validation experiment biological replicates (selected data points)
+    baseline_data_biol_repl_df = pd.read_csv(baseline_exp_biol_repl_data_path, sep='\t')
+    val_data_biol_repl_df = pd.read_csv(val_exp_biol_repl_data_path, sep='\t')
 
     # PREPARE DATA
-
-#    Uri_MW = 244.20         # [g/mol]
-#    GalNAc_MW = 221.21      # [g/mol]
-#    UDP_GalNAc_MW = 607.36  # [g/mol]
-#    reaction_vol = 0.5      # [ml]
-
     # 1) get enzyme distributions (convert concentrations from mM to g/l)
     baseline_E_distr = dict(opt_result_start_init_conc.loc[[name for name in opt_result_start_init_conc.index if
                                                             name.startswith('E_')]])
@@ -363,13 +367,41 @@ def plot_base_opt_process_comparison(baseline_exp_data_path, best_opt_result_pat
                                       index=baseline_S_init_conc.keys(),
                                       columns=['substrate', 'baseline', 'optimized'])
 
-    # 4) get (absolute) product titers at the specified process time point [mmol_product/l]
+    # 4) get (absolute) product titers at the specified process time point [mmol_UDP_GalNAc / l]
     baseline_prod_titer = baseline_data_df_raw.loc[baseline_data_df_raw['Time'] == titer_and_yield_timepoint, '[UDP_GalNAc]'].iloc[0]
     opt_prod_titer = val_data_df_raw.loc[val_data_df_raw['Time'] == titer_and_yield_timepoint, '[UDP_GalNAc]'].iloc[0]
 
-    # 5) calculate (absolute) product yields [mmol product/l / mmol substrate/l = mmol product / mmol substrate]
-    baseline_yield = (2*(baseline_prod_titer)) / (baseline_S_init_conc['Uri'] + baseline_S_init_conc['GalNAc'])
-    opt_yield = (2*(opt_prod_titer)) / (opt_S_init_conc['Uri'] + opt_S_init_conc['GalNAc'])
+    # 5) calculate (relative) product titers [(mmol_UDP_GalNAc / l) / (g_Enzyme / l) = mmol_UDP_GalNAc/g_Enzyme]
+    baseline_prod_titer_rel = baseline_prod_titer / baseline_E_tot['gram_enzyme_load']
+    opt_prod_titer_rel = opt_prod_titer / opt_E_tot['gram_enzyme_load']
+
+    # 6) calculate (absolute) product yields [((mmol UDP_GalNAc / l) / (mmol Uridine / l)) * 100% = (mmol UDP_GalNAc / mmol Uridine) * 100%]
+    baseline_prod_yield = ( baseline_prod_titer / baseline_S_init_conc['Uri'] ) * 100
+    opt_prod_yield = ( opt_prod_titer / opt_S_init_conc['Uri'] ) * 100
+
+    # 7) calculate (relative) product yields [((mmol_UDP_GalNAc) / (mmol_Uridine) * 100%) / (g_Enzyme / l) = (mmol_UDP_GalNAc / (mmol_Uridine * (g_Enzyme / l))) * 100%]
+    baseline_prod_yield_rel = baseline_prod_yield / baseline_E_tot['gram_enzyme_load']
+    opt_prod_yield_rel = opt_prod_yield / opt_E_tot['gram_enzyme_load']
+
+    # 8) calculate standard deviations of all titers and yields (absolute and relative) across the three biological replicates
+    baseline_prod_titer_std = np.std(np.array([baseline_data_biol_repl_df.loc[:, f'[UDP_GalNAc]_{titer_and_yield_timepoint}']]))
+    opt_prod_titer_std = np.std(np.array([val_data_biol_repl_df.loc[:, f'[UDP_GalNAc]_{titer_and_yield_timepoint}']]))
+    baseline_prod_titer_rel_std = np.std(np.array([val/baseline_E_tot['gram_enzyme_load'] for val 
+                                                   in baseline_data_biol_repl_df.loc[:, f'[UDP_GalNAc]_{titer_and_yield_timepoint}']]))
+    opt_prod_titer_rel_std = np.std(np.array([val/opt_E_tot['gram_enzyme_load'] for val 
+                                              in val_data_biol_repl_df.loc[:, f'[UDP_GalNAc]_{titer_and_yield_timepoint}']]))
+    baseline_prod_yield_std = np.std(np.array([(val_prod/val_subs)*100 for val_prod, val_subs 
+                                                in zip(baseline_data_biol_repl_df.loc[:, f'[UDP_GalNAc]_{titer_and_yield_timepoint}'], 
+                                                       baseline_data_biol_repl_df.loc[:, '[Uri]_0'])]))
+    opt_prod_yield_std = np.std(np.array([(val_prod/val_subs)*100 for val_prod, val_subs 
+                                           in zip(val_data_biol_repl_df.loc[:, f'[UDP_GalNAc]_{titer_and_yield_timepoint}'], 
+                                                  val_data_biol_repl_df.loc[:, '[Uri]_0'])]))
+    baseline_prod_yield_rel_std = np.std(np.array([[((val_prod/val_subs)*100)/baseline_E_tot['gram_enzyme_load'] for val_prod, val_subs 
+                                                      in zip(baseline_data_biol_repl_df.loc[:, f'[UDP_GalNAc]_{titer_and_yield_timepoint}'], 
+                                                             baseline_data_biol_repl_df.loc[:, '[Uri]_0'])]]))
+    opt_prod_yield_rel_std = np.std(np.array([((val_prod/val_subs)*100)/opt_E_tot['gram_enzyme_load'] for val_prod, val_subs 
+                                                 in zip(val_data_biol_repl_df.loc[:, f'[UDP_GalNAc]_{titer_and_yield_timepoint}'], 
+                                                        val_data_biol_repl_df.loc[:, '[Uri]_0'])]))
 
     # VISUALIZE DATA
     fig, axes = plt.subplot_mosaic([['E_distr', 'E_distr', 'E_distr', 'E_distr', 'E_distr', 'E_tot',],
@@ -410,36 +442,42 @@ def plot_base_opt_process_comparison(baseline_exp_data_path, best_opt_result_pat
 
     # plot absolute values of product titers [mmol product/l] and product yields [mmol product/mmol_substrate]
     axes['titer_abs'].bar(['baseline_titer_abs', 'optimized_titer_abs'],
-                [baseline_prod_titer, opt_prod_titer],
-                color=colors)
+                          [baseline_prod_titer, opt_prod_titer],
+                          color=colors,
+                          yerr=[baseline_prod_titer_std, opt_prod_titer_std],
+                          capsize=5)
     axes['titer_abs'].set_xticklabels([])
     axes['titer_abs'].set_xticks([])
-    axes['titer_abs'].set_ylabel('$Titer_{' + str(titer_and_yield_timepoint) + 'h}$ [$mmol_{product}/l$]', labelpad=7, fontsize=font_size)
-    axes['yield_abs'].bar(['baseline_yield_abs', 'optimized_yield_abs'],
-                [baseline_yield, opt_yield],
-                color=colors)
+    axes['titer_abs'].set_ylabel('$Titer_{' + str(titer_and_yield_timepoint) + 'h}$ [$mmol_{UDP-GalNAc}/l$]', labelpad=7, fontsize=font_size)
+    axes['yield_abs'].bar(['baseline_prod_yield_abs', 'optimized_yield_abs'],
+                          [baseline_prod_yield, opt_prod_yield],
+                          color=colors,
+                          yerr=[baseline_prod_yield_std, opt_prod_yield_std],
+                          capsize=5)
     axes['yield_abs'].set_xticklabels([])
     axes['yield_abs'].set_xticks([])
-    axes['yield_abs'].set_ylabel('$Yield_{' + str(titer_and_yield_timepoint) + 'h}$ [$mmol_{product}/mmol_{substrate}$]', labelpad=7, fontsize=font_size)
+    axes['yield_abs'].set_ylabel('$Yield_{' + str(titer_and_yield_timepoint) + 'h}$ [$(mmol_{UDP-GalNAc}/mmol_{Uridine}) \cdot 100\%$]', labelpad=7, fontsize=font_size-3)
 
     # only plot relative values of product titers and product yields if it makes sense, i.e., if the enzyme load is different between the baseline and the optimized scenario (which in turn will lead to a difference between absolute and relative titers/yields)
     if np.round(baseline_E_tot['gram_enzyme_load'], 2) != np.round(opt_E_tot['gram_enzyme_load'], 2):
         # relative titer: (absolute titer [mmol product/l] ) / enzyme load [g enzyme/l] => (mmol product)/(g enzyme)
         axes['titer_rel'].bar(['baseline_titer_rel', 'optimized_titer_rel'],
-                    [baseline_prod_titer / baseline_E_tot['gram_enzyme_load'],
-                     opt_prod_titer / opt_E_tot['gram_enzyme_load']],
-                    color=colors)
+                              [baseline_prod_titer_rel, opt_prod_titer_rel],
+                              color=colors,
+                              yerr=[baseline_prod_titer_rel_std, opt_prod_titer_rel_std],
+                              capsize=5)
         axes['titer_rel'].set_xticklabels([])
         axes['titer_rel'].set_xticks([])
-        axes['titer_rel'].set_ylabel('$rel. Titer_{' + str(titer_and_yield_timepoint) + 'h}$ [$mmol_{product}/g_{enzyme}$]', labelpad=7, fontsize=font_size)
+        axes['titer_rel'].set_ylabel('$Rel. Titer_{' + str(titer_and_yield_timepoint) + 'h}$ [$mmol_{UDP-GalNAc}/g_{enzyme}$]', labelpad=7, fontsize=font_size)
         # relative yield = absolute yield [mmol product/ mmol substrate] / enzyme load [g enzyme/l] => (mmol product)/(mmol substrat * (g enzyme/l))
-        axes['yield_rel'].bar(['baseline_yield_rel', 'optimized_yield_rel'],
-                    [baseline_yield / baseline_E_tot['gram_enzyme_load'], 
-                    opt_yield / opt_E_tot['gram_enzyme_load']],
-                    color=colors)
+        axes['yield_rel'].bar(['baseline_prod_yield_rel', 'optimized_yield_rel'],
+                              [baseline_prod_yield_rel, opt_prod_yield_rel],
+                              color=colors,
+                              yerr=[baseline_prod_yield_rel_std, opt_prod_yield_rel_std],
+                              capsize=5)
         axes['yield_rel'].set_xticklabels([])
         axes['yield_rel'].set_xticks([])
-        axes['yield_rel'].set_ylabel('$rel. Yield_{' + str(titer_and_yield_timepoint) + 'h}$ [$mmol_{product}/(mmol_{substrate} \cdot (g_{enzyme}/l))$]', labelpad=7, fontsize=font_size-2)
+        axes['yield_rel'].set_ylabel('$Rel. Yield_{' + str(titer_and_yield_timepoint) + 'h}$ [$mmol_{UDP-GalNAc}/(mmol_{Uridine} \cdot (g_{enzyme}/l)) \cdot 100\%$]', labelpad=7, fontsize=font_size-3)
     else:
         axes['titer_rel'].axis("off")
         axes['yield_rel'].axis("off")
@@ -457,10 +495,10 @@ def plot_base_opt_process_comparison(baseline_exp_data_path, best_opt_result_pat
                                 'optimized': opt_prod_titer},
                  'titers_rel': {'baseline': baseline_prod_titer / baseline_E_tot['gram_enzyme_load'],
                                 'optimized': opt_prod_titer / opt_E_tot['gram_enzyme_load']},
-                 'yields_abs': {'baseline': baseline_yield,
-                                'optimized': opt_yield},
-                 'yields_rel': {'baseline': baseline_yield / baseline_E_tot['gram_enzyme_load'],
-                                'optimized': opt_yield / opt_E_tot['gram_enzyme_load']}}
+                 'yields_abs': {'baseline': baseline_prod_yield,
+                                'optimized': opt_prod_yield},
+                 'yields_rel': {'baseline': baseline_prod_yield / baseline_E_tot['gram_enzyme_load'],
+                                'optimized': opt_prod_yield / opt_E_tot['gram_enzyme_load']}}
     list_of_strings = [f'{key} : {data_dict[key]}' for key in data_dict]
     with open(f'{result_file_path}_data.txt', 'w') as file:
         [file.write(f'{string}\n') for string in list_of_strings]
@@ -472,6 +510,11 @@ def plot_base_opt_process_comparison(baseline_exp_data_path, best_opt_result_pat
 cwd = Path.cwd()
 exp_val_data_dir = cwd / 'exp_val_data'
 baseline_exp_data_path = f'{str(exp_val_data_dir)}\\UDP-GalNAc36_50_with_initConcColumns.txt'
+baseline_exp_biol_repl_data_path = f'{str(exp_val_data_dir)}\\UDP-GalNAc36_50_biol_repl_data.txt'
+
+# global matplotlib command to enable sbscripts in axis labels that are not automatically italicized
+params = {'mathtext.default': 'regular' }
+plt.rcParams.update(params)
 
 # --------------------------------------------------------------------------------------------------------#
 
@@ -486,11 +529,12 @@ fits_data_path = f'{opt_var_a_path}\\rep2_MV5\\sampling_output_Particle_Swarm50r
 best_opt_result_path = f'{opt_var_a_path}\\rep2_MV5\\ImpExtSearch_v23b_rep2_MV5_PartSwarm50x_OP01withS_7h_CrossVal_Scoring_Result_O11.pkl'
 exp_val_data_path = f'{str(exp_val_data_dir)}\\UDP-GalNAc40_TO7h_with_initConcColumns.txt'
 exp_val_data_SD_path = f'{str(exp_val_data_dir)}\\UDP-GalNAc40_TO7h_SD.txt'
+exp_val_biol_repl_data_path = f'{str(exp_val_data_dir)}\\UDP-GalNAc40_TO7h_biol_repl_data.txt'
 tc_plot_result_file_path = f'{opt_var_a_path}\\rep2_MV5\\ImpExtSearch_v23b_rep2_MV5_OP01withS_7h_O11'
 visualize_predTC_withValData(model_path, fits_data_path, best_opt_result_path, exp_val_data_path, exp_val_data_SD_path, tc_plot_result_file_path)
 titer_and_yield_timepoint = 7  # [h]
 perf_plot_result_file_path = f'{opt_var_a_path}\\rep2_MV5\\ImpExtSearch_v23b_rep2_MV5_OP01withS_7h_O11_base_opt_compare'
-plot_base_opt_process_comparison(baseline_exp_data_path, best_opt_result_path, exp_val_data_path, titer_and_yield_timepoint, perf_plot_result_file_path)
+plot_base_opt_process_comparison(baseline_exp_data_path, baseline_exp_biol_repl_data_path, best_opt_result_path, exp_val_data_path, exp_val_biol_repl_data_path, titer_and_yield_timepoint, perf_plot_result_file_path)
 
 # --------------------------------------------------------------------------------------------------------#
 
@@ -506,8 +550,9 @@ fits_data_path = f'{opt_var_b_path}\\rep2_MV5\\sampling_output_Particle_Swarm50r
 best_opt_result_path = f'{opt_var_b_path}\\rep2_MV5\\ImpExtSearch_v23b_rep2_MV5_PartSwarm50x_OP05withS_CrossVal_Scoring_Result_O19.pkl'
 exp_val_data_path = f'{str(exp_val_data_dir)}\\UDP-GalNAc40_LO_with_initConcColumns.txt'
 exp_val_data_SD_path = f'{str(exp_val_data_dir)}\\UDP-GalNAc40_LO_SD.txt'
+exp_val_biol_repl_data_path = f'{str(exp_val_data_dir)}\\UDP-GalNAc40_LO_biol_repl_data.txt'
 result_file_name = f'{opt_var_b_path}\\rep2_MV5\\ImpExtSearch_v23b_rep2_MV5_OP05withS_O19'
 visualize_predTC_withValData(model_path, fits_data_path, best_opt_result_path, exp_val_data_path, exp_val_data_SD_path, result_file_name)
 titer_and_yield_timepoint = 24  # [h]
 perf_plot_result_file_path = f'{opt_var_b_path}\\rep2_MV5\\ImpExtSearch_v23b_rep2_MV5_OP05withS_O19_base_opt_compare'
-plot_base_opt_process_comparison(baseline_exp_data_path, best_opt_result_path, exp_val_data_path, titer_and_yield_timepoint, perf_plot_result_file_path)
+plot_base_opt_process_comparison(baseline_exp_data_path, baseline_exp_biol_repl_data_path, best_opt_result_path, exp_val_data_path, exp_val_biol_repl_data_path, titer_and_yield_timepoint, perf_plot_result_file_path)
