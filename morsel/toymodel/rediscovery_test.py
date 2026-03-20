@@ -422,11 +422,11 @@ ax.set(xlabel='Time [h]', ylabel='Concentration [mM]')
 ax.legend(handles=[Line2D([0], [0], color='black', linewidth=1, linestyle='dashed'),
                    Line2D([0], [0], color='black', linewidth=1, linestyle='solid'),
                    Line2D([0], [0], color='black', marker='.', linestyle='None')],
-          labels=['Initial Core Model', 'Selected Model', 'Data'])
+          labels=['Initial core model', 'Selected model', 'Data'])
 # save the plot and the associated time course simulation data 
 plt.savefig(plot_name + '_comparison_merged.png', dpi=200)
 list_of_TC_results = [var1_TC_results_merged_df, var2_TC_results_merged_df]
-storage_file = open(file_name + '_TC_results_merged.pkl', 'wb')
+storage_file = open(plot_name + '_TC_results_merged.pkl', 'wb')
 pickle.dump(list_of_TC_results, storage_file)
 storage_file.close()
 # -###########################################################################

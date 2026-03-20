@@ -270,10 +270,10 @@ def visualize_predTC_withValData(model_path, fits_data_path, best_opt_result_pat
     fig.supylabel('Concentration [mM]', x=0.07, fontsize=font_size)
 
     # add a legend for the entire figure
-    fig.legend(handles=[plt.Line2D([0], [0], color='tab:blue', alpha=0.3, label='Simulated Trajectories'),
-                        plt.Line2D([0], [0], color='tab:red', label='Mean Trajectory'),
-                        plt.Line2D([0], [0], color='tab:red', alpha=0.2, lw=8, label='±1 Std Dev'),
-                        plt.Line2D([0], [0], color='black', marker='o', markersize=8, linestyle='None', label='Validation Data')],
+    fig.legend(handles=[plt.Line2D([0], [0], color='tab:blue', alpha=0.3, label='Simulated trajectories'),
+                        plt.Line2D([0], [0], color='tab:red', label='Mean trajectory'),
+                        plt.Line2D([0], [0], color='tab:red', alpha=0.2, lw=8, label='±1 Standard deviation'),
+                        plt.Line2D([0], [0], color='black', marker='o', markersize=8, linestyle='None', label='Validation data')],
                loc='lower center',
                ncol=4,
                fontsize=font_size)
