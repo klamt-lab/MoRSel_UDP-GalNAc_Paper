@@ -97,7 +97,7 @@ plot_colors = {'S': '#17becf',  # c
                'X': '#bcbd22'}  # y
 fig, ax = plt.subplots(figsize=(4,3))
 for species_name, line_color in plot_colors.items():
-    ax.plot(true_tc_result.loc[:, 'Time'], true_tc_result.loc[:, f'[{species_name}]'], 
+    ax.plot(true_tc_result.index, true_tc_result.loc[:, f'{species_name}'], 
             label=species_name, marker='.', linestyle='dotted', linewidth=1, color=line_color)
 ax.set(xlabel='Time [h]', ylabel='Concentration [mM]')
 for item in ([ax.title, ax.xaxis.label, ax.yaxis.label] +
