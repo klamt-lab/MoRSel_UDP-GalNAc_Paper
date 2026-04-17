@@ -45,27 +45,21 @@ dict_of_param_ensembles = {'NegCtrl': param_sets_NegCtrl,
                            'rep2_MV5': param_sets_rep2, 
                            'rep3_MV4': param_sets_rep3, 
                            'rep4_MV6': param_sets_rep4}
-# for each ImpExtSearch result get the 'trace' from the starting point to the selected best ranking model variant (order of the terms that were added from start to selected variant)
+# for each ImpExtSearch result get the 'trace' from the starting point to the selected best ranking model variant (the 'trace' is the order of the terms that were added from the start to the selected model variant)
+best_reps_and_MVs = [key.split('_') for key in dict_of_param_ensembles.keys() if 'MV' in key]
+best_MVs = [item for item in sum(best_reps_and_MVs, []) if 'MV' in item]
+best_MVs_indices = [int(x.split('MV')[1]) for x in best_MVs]
 dict_of_traces = {'NegCtrl': 'no trace calculation necessary',
                   'rep0': None,
                   'rep1': None,
                   'rep2': None,
                   'rep3': None,
                   'rep4': None}
-for run_ID, output_dict in dict_of_ImpExtSearch_logs.items():
+for (run_ID, output_dict), best_MV_idx in zip(dict_of_ImpExtSearch_logs.items(), best_MVs_indices):
     # set starting point of the trace calculation (= unchanged start variant of the ImpExtSearch result)
     start_var = output_dict['evaluated_vars_log'][0]['variant']
     # set end point of the trace calculation (= best ranking model variant of the ImpExtSearch result)
-    analysis_result = output_dict['analysis_result']
-    # check if there is more than one model variant that achieves the best (lowest) median rank
-    if len(analysis_result['best_median_rank']) == 1:
-        # there's only one model variant that achieves the best median rank so it is saved
-        best_ranking_var_log_dict = analysis_result['best_median_rank'][0]
-    else:
-        # there's more than one model variant that achieves the best median rank -> select the model that reaches the best (median+mean) rank
-        sum_of_mean_and_median_ranks = analysis_result['fitness_dataframe']['mean_rank']+analysis_result['fitness_dataframe']['median_rank']
-        best_ranking_var_log_dict = output_dict['evaluated_vars_log'][sum_of_mean_and_median_ranks.idxmin()]
-    selected_var = best_ranking_var_log_dict['variant']
+    selected_var = output_dict['evaluated_vars_log'][best_MV_idx]['variant']
     # get trace
     selected_var_trace = get_imp_ext_search_trace_for_selected_var(start_var, 
                                                                    selected_var,
