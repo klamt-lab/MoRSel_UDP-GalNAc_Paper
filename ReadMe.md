@@ -5,11 +5,32 @@ This repository contains all code and experimental data used to generate the res
 
 <details>
 
-<summary>Python Requirements</summary>
+<summary>Quick reference guide for the figures of the manuscript</summary>
+
+| Manuscript figure | Link to associated files (if applicable)                                                                                                                                                       |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Figure 1          | manually created schematic                                                                                                                                                                     |
+| Figure 2          | manually created schematic                                                                                                                                                                     |
+| Figure 3          | manually created schematic                                                                                                                                                                     |
+| Figure 4          | mix of manually created schematics and image files in [the toymodel subdirectory](morsel/toymodel)                                                                                             |
+| Figure 5          | manually created schematic                                                                                                                                                                     |
+| Figure 6          | manually created schematic                                                                                                                                                                     |
+| Figure 7          | [v23bNegCtrldashed_v23IESrep2MV5solid_DataUDP-GalNAc36_50_Comparison_merged.png](morsel/v23bNegCtrldashed_v23IESrep2MV5solid_DataUDP-GalNAc36_50_Comparison_merged.png)                        |
+| Figure 8          | [ImpExtSearch_v23b_rep2_MV5_OP01withS_7h_O11_plot.png](process_optimization/a_constPolyP32mM_ubATP2.5mM/rep2_MV5/ImpExtSearch_v23b_rep2_MV5_OP01withS_7h_O11_plot.png)                         |
+| Figure 9          | [ImpExtSearch_v23b_rep2_MV5_OP01withS_7h_O11_base_opt_compare.png](process_optimization/a_constPolyP32mM_ubATP2.5mM/rep2_MV5/ImpExtSearch_v23b_rep2_MV5_OP01withS_7h_O11_base_opt_compare.png) |
+| Figure 10         | [ImpExtSearch_v23b_rep2_MV5_OP05withS_O19_plot.png](process_optimization/b_constPolyP32mMATP0.5mM/rep2_MV5/ImpExtSearch_v23b_rep2_MV5_OP05withS_O19_plot.png)                                  |
+| Figure 11         | [ImpExtSearch_v23b_rep2_MV5_OP05withS_O19_base_opt_compare.png](process_optimization/b_constPolyP32mMATP0.5mM/rep2_MV5/ImpExtSearch_v23b_rep2_MV5_OP05withS_O19_base_opt_compare.png)          |
+| Figure 12         | visualization of experimental data by a collaborator                                                                                                                                           |
+
+</details>
+
+## *MoRSel* User Guide
+
+### 0. Python requirements
 
 All code was developed using Python version 3.12.2 as well as the following packages:
 
-| Python Package |  Version |
+| Python package |  Version |
 | -------------- | -------- |
 | copasi_basico  | 0.58     |
 | joblib         | 1.4.0    |
@@ -19,10 +40,6 @@ All code was developed using Python version 3.12.2 as well as the following pack
 | python-copasi  | 4.42.284 |
 | seaborn        | 0.13.2   |
 | tqdm           | 4.67.1   |
-
-</details>
-
-## *MoRSel* User Guide
 
 ### 1. Implementing a model
 The [*MoRSel* function library](/morsel/func_lib.py) contains the definitions of all necessary functions grouped by type. In the first section, the model-specific functions are defined. Two different models are already implemented: the UDP-GalNAc model and the toymodel. Each is represented by two functions: *\<model-name\>_data* and *\<model-name\>_term_libs*. In order to add a new model, both of these functions need to be defined.
