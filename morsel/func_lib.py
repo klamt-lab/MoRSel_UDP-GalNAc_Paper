@@ -1972,48 +1972,80 @@ def compare_struct_var_tcs_merged(var1, var2, exp_data_dataframes, exp_ID, exp_n
                                                                       axis=0, ignore_index=True)
     # -###########################################################################
     # MULTIPLOT
-    # create seaborn line plots from simulated result data frame (separate plots for uridine-based, GalNAc and GalNAc1p, and adenosine-based species) for variant 1 (multi plot row index 0, line style solid) and variant 2 (multi plot row index 0, line style dashed); for the simulation results: plot the mean and 95% confidence interval by aggregating over PE replicates (at each time point)
-    fig, axs = plt.subplots(1, 3, figsize=(16,7), layout='constrained')
-    scatterplot_marker_size = 20
-    # define the species groups for each subplot
-    species_groups = [['Uri', 'UMP', 'UDP', 'UTP', 'UDP_GalNAc'],
-                      ['GalNAc', 'GalNAc1P'],
-                      ['AMP', 'ADP', 'ATP', 'ATPP']]
-    # define the colors for each species group
+    fig, axs = plt.subplots(1, 3, figsize=(16, 7), layout='constrained')
+    # define color palettes for the different subplots
     colors = [[sns.color_palette("Set1")[0], sns.color_palette("Set1")[1], sns.color_palette("Set1")[2], sns.color_palette("Set1")[3], sns.color_palette("Set1")[4]],
               [sns.color_palette("Set1")[0], sns.color_palette("Set1")[1]],
               [sns.color_palette("Set1")[0], sns.color_palette("Set1")[1], sns.color_palette("Set1")[2], sns.color_palette("Set1")[3]]]
+    # define species groups for each subplot
+    species_groups = [['Uri', 'UMP', 'UDP', 'UTP', 'UDP_GalNAc'],
+                      ['GalNAc', 'GalNAc1P'],
+                      ['AMP', 'ADP', 'ATP', 'ATPP']]
     # plot the data
     for i, ax in enumerate(axs):
         # plot variant 1 (dashed lines)
         sns.lineplot(data=var1_TC_results_list_merged_longform[var1_TC_results_list_merged_longform.Species.isin(species_groups[i])],
-                     x="Time", y="Concentration", hue="Species", ax=ax, palette=colors[i], linestyle='dashed', legend=False)
+                     x="Time",
+                     y="Concentration",
+                     hue="Species",
+                     ax=ax,
+                     palette=colors[i],
+                     linestyle='dashed',
+                     legend=False,
+                     alpha=0.7)
         # plot variant 2 (solid lines)
         sns.lineplot(data=var2_TC_results_list_merged_longform[var2_TC_results_list_merged_longform.Species.isin(species_groups[i])],
-                     x="Time", y="Concentration", hue="Species", ax=ax, palette=colors[i], linestyle='solid', legend=False)
-        # plot experimental data (scatter points)
+                     x="Time",
+                     y="Concentration",
+                     hue="Species",
+                     ax=ax,
+                     palette=colors[i],
+                     linestyle='solid',
+                     legend=False,
+                     alpha=0.7)
+        # plot experimental data (points)
         for j, species in enumerate(species_groups[i]):
-            # check if experimental data is available for this species
             if f'[{species}]' in exp_data_dataframes[exp_ID].columns:
-                sns.scatterplot(data=exp_data_dataframes[exp_ID], x='Time', y=f'[{species}]', ax=ax,
-                                color=colors[i][j], s=scatterplot_marker_size, label=f'{species}')
-        # create custom legend
-        legend_elements = list()
+                # scatter plot for the points themselves
+                sns.scatterplot(data=exp_data_dataframes[exp_ID],
+                                x='Time',
+                                y=f'[{species}]',
+                                ax=ax,
+                                color=colors[i][j],
+                                s=50,  # Smaller size
+                                marker='o',  # Uniform marker
+                                edgecolor='black',  # Black outline
+                                linewidth=1,
+                                label=f'{species.replace("_", "-")}')
+                # dotted lines to connect the points (to make it easier to see the evolution over time)
+                sns.lineplot(data=exp_data_dataframes[exp_ID],
+                             x='Time',
+                             y=f'[{species}]',
+                             ax=ax,
+                             color=colors[i][j],
+                             linestyle='dotted',
+                             alpha=0.8,
+                             linewidth=1,
+                             legend=False)  # no legend for the connecting lines       
+        # create custom legends
+        legend_elements = []
         for j, species in enumerate(species_groups[i]):
-            # replace underscores with dashes if they show up in the species name 
-            if '_' in species:
-                species = species.replace('_', '-')
-            legend_elements.append(Patch(facecolor=colors[i][j], label=species))
-        ax.legend(handles=legend_elements, frameon=True)
-    # overwrite axis labels which were automatically generated from data frame column names
-    axs[0].set(xlabel='Time [h]', ylabel='Concentration [mM]')
-    axs[1].set(xlabel='Time [h]', ylabel='Concentration [mM]')
-    axs[2].set(xlabel='Time [h]', ylabel='Concentration [mM]')
-    # save the plot and the associated time course simulation data 
-    plt.savefig(f'{plot_name}_Data{exp_name}_Comparison_merged.png', dpi=200)
+            species_name = species.replace('_', '-')
+            legend_elements.append(plt.Line2D([0], [0],
+                                              marker='o',
+                                              color='w',
+                                              markerfacecolor=colors[i][j],
+                                              markeredgecolor='black',
+                                              markersize=10,
+                                              label=f'{species_name}'))
+        ax.legend(handles=legend_elements, frameon=True, loc='upper right')
+        # set subplot titles and axis labels
+        ax.set_xlabel('Time [h]')
+        ax.set_ylabel('Concentration [mM]')
+    # save the plot
+    plt.savefig(f'{plot_name}_Data{exp_name}_Comparison_merged.png', dpi=200, bbox_inches='tight')
     list_of_TC_results = [var1_TC_results_merged_df, var2_TC_results_merged_df]
-    storage_file = open(f'{plot_name}_Data{exp_name}_TC_results_merged.pkl', 'wb')
-    pickle.dump(list_of_TC_results, storage_file)
-    storage_file.close()
+    with open(f'{plot_name}_Data{exp_name}_TC_results_merged.pkl', 'wb') as storage_file:
+        pickle.dump(list_of_TC_results, storage_file)
 
 
