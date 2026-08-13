@@ -94,7 +94,7 @@ data_dict = {'Model': [run_ID for run_ID in dict_of_param_ensembles.keys()],
 # create pandas data frame for report from the dictionary
 report_df = pd.DataFrame(data_dict)
 # create extra columns that show the average and median ranks across all 6 model selection criteria for the original 5 runs and for all runs
-report_df_ranked = report_df.loc[0:6, ['AIC', 'AICc', 'BIC', 'CIC1', 'CIC2', 'CIC3']].rank()
+report_df_ranked = report_df.loc[0:5, ['AIC', 'AICc', 'BIC', 'CIC1', 'CIC2', 'CIC3']].rank()
 report_df['original5_MSC_median_rank'] = np.round(report_df_ranked.median(axis=1), 2)
 report_df['original5_MSC_mean_rank'] = np.round(report_df_ranked.mean(axis=1), 2)
 report_df_ranked_all = report_df.loc[:, ['AIC', 'AICc', 'BIC', 'CIC1', 'CIC2', 'CIC3']].rank()
