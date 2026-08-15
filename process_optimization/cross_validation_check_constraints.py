@@ -13,11 +13,8 @@ def cross_validation_check_constraints(model_variant_name, opt_variant_name, pat
     """ Check how often a relevant constraint is violated in the corresponding cross-validation table.
     
     :param model_variant_name: name of the model variant that was used to calculate the optimizations
-    :type model_variant_name: string
     :param opt_variant_name: optimization variant ('a' or 'b')
-    :type opt_variant_name: string
     :param path_to_files: path to the result files of the optimization (this is also where the generated figures will be stored)
-    :type path_to_files:
     """
 
     # set working directory to the provided path so that result files are found and generated figures are saved to the correct directory

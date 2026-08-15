@@ -37,7 +37,7 @@ All code was developed using Python version 3.12.2 as well as the following pack
 | tqdm           | 4.67.1   |
 
 ### 1. Defining all modeling information
-The [*MoRSel* function library](/morsel/func_lib.py) contains the definitions of all necessary functions grouped by type. In the first section, the model-specific functions are defined. Two different models are already implemented: the UDP-GalNAc model and the toymodel. Each is represented by two functions: *\<model-name\>_data* and *\<model-name\>_term_libs*. In order to add a new model, both of these functions need to be defined.
+The [*MoRSel* function library](/morsel/func_lib.py) contains the definitions of all necessary functions grouped by type. In the first section, the model-specific functions are defined. Two different models are already implemented: the UDP-GalNAc model and the toy model. Each is represented by two functions: *\<model-name\>_data* and *\<model-name\>_term_libs*. In order to add a new model, both of these functions need to be defined.
 
 #### *\<model-name\>_data* function
 Defines and returns dictionaries with the following information: (1) stoichiometry of all model reactions (using [Copasi syntax](https://copasi.org/Support/User_Manual/Model_Creation/Reactions/)), (2) any known values of kinetic model parameters (optional), and (3) initial substrate concentrations. The latter are set as placeholder values to fallback on if the model is simulated without specifying any initial conditions.
