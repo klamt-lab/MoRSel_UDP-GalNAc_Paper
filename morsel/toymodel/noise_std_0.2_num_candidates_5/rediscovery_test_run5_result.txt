@@ -1,0 +1,514 @@
+
+model_selection:
+ToyModelReDisTest_noise_std_0.2_num_candidates_5_run5
+
+runID:
+5
+
+selected_variant_name:
+ToyModelReDisTest_noise_std_0.2_num_candidates_5_run5_ModelVar1
+
+selected_variant_idx:
+1
+
+full_analysis_result:
+{'fitness_dataframe':       min_AIC    min_AICc     min_BIC    min_CIC1     min_CIC2   min_CIC3 term_coords term_index  var_idx  mean_rank  median_rank
+0   39.876513   34.704100   44.366036   34.892809   633.876513  11.292171         NaN        NaN        0   5.166667          6.0
+1 -145.198438 -152.976216 -137.715901 -147.438516   844.801562 -31.039688    [(3, 0)]        [1]        1   2.166667          2.5
+2 -145.871788 -154.641019 -136.892743 -148.399481  1042.128212 -26.311965    [(0, 1)]        [6]        2   2.166667          2.0
+3 -145.871914 -155.871914 -133.899853 -148.922161  1438.128086 -20.233989    [(2, 0)]        [1]        3   2.166667          2.0
+4 -142.960236 -152.960236 -127.995160 -146.664212  1837.039764 -16.296024    [(1, 0)]        [1]        4   4.166667          4.0
+5 -140.039618 -150.039618 -125.074542 -144.035656  1839.960382 -16.003962    [(0, 1)]        [5]        5   5.166667          5.0, 'fitness_dataframe_ranked':    min_AIC  min_AICc  min_BIC  min_CIC1  min_CIC2  min_CIC3
+0      6.0       6.0      6.0       6.0       1.0       6.0
+1      3.0       3.0      1.0       3.0       2.0       1.0
+2      2.0       2.0      2.0       2.0       3.0       2.0
+3      1.0       1.0      3.0       1.0       4.0       3.0
+4      4.0       4.0      4.0       4.0       5.0       4.0
+5      5.0       5.0      5.0       5.0       6.0       5.0, 'best_mean_rank': [{'variant':     base  term1
+r1     1      0
+r2     0      0
+r3     0      0
+r4     1      0, 'estimation_results': [{'structural_variant':     base  term1
+r1     1      0
+r2     0      0
+r3     0      0
+r4     1      0, 'reaction_schemes': {'r1': 'S = P', 'r2': 'S = X', 'r3': 'P = X', 'r4': 'S + P = X'}, 'fit_setup':           lower      upper     start affected
+name                                         
+(r1).k_f    0.1       10.0  0.126152       []
+(r1).k_r    0.1       10.0  0.320244       []
+(r4).k_f  1e-06  1000000.0  0.100000       []
+(r4).k_r  1e-06  1000000.0  0.100000       [], 'fit_algorithm': 'Particle Swarm', 'fit_algorithm_settings': {'method': {'Iteration Limit': 1000, 'Swarm Size': 50, 'Std. Deviation': 1e-06}}, 'estimated_parameters':           lower      upper           sol affected
+name                                             
+(r1).k_f    0.1       10.0      0.300818       []
+(r1).k_r    0.1       10.0      0.298300       []
+(r4).k_f  1e-06  1000000.0  78167.378038       []
+(r4).k_r  1e-06  1000000.0  76735.377342       [], 'fit_statistics': {'obj': 0.29925244398377193, 'rms': 0.09522739037848364, 'sd': 0.10158272388818809, 'f_evals': 50058, 'failed_evals_exception': 0, 'failed_evals_nan': 0, 'constraint_evals': 0, 'failed_constraint_evals': 0, 'cpu_time': 16.296875, 'data_points': 33, 'valid_data_points': 33, 'evals_per_sec': 0.0003255598505733349}, 'information_criteria': {'AIC': np.float64(-145.1981858574533), 'AICc': np.float64(-152.97596363523107), 'BIC': np.float64(-137.7156480501209), 'CIC1': np.float64(-147.43827656458063), 'CIC2': np.float64(844.8018141425467), 'CIC3': np.float64(-31.03963717149066)}}, {'structural_variant':     base  term1
+r1     1      0
+r2     0      0
+r3     0      0
+r4     1      0, 'reaction_schemes': {'r1': 'S = P', 'r2': 'S = X', 'r3': 'P = X', 'r4': 'S + P = X'}, 'fit_setup':           lower      upper     start affected
+name                                         
+(r1).k_f    0.1       10.0  0.126152       []
+(r1).k_r    0.1       10.0  0.320244       []
+(r4).k_f  1e-06  1000000.0  0.100000       []
+(r4).k_r  1e-06  1000000.0  0.100000       [], 'fit_algorithm': 'Particle Swarm', 'fit_algorithm_settings': {'method': {'Iteration Limit': 1000, 'Swarm Size': 50, 'Std. Deviation': 1e-06}}, 'estimated_parameters':           lower      upper            sol affected
+name                                              
+(r1).k_f    0.1       10.0       0.300855       []
+(r1).k_r    0.1       10.0       0.298342       []
+(r4).k_f  1e-06  1000000.0  282745.330736       []
+(r4).k_r  1e-06  1000000.0  277549.590351       [], 'fit_statistics': {'obj': 0.2992504204684534, 'rms': 0.09522706841885926, 'sd': 0.10158238044146026, 'f_evals': 50058, 'failed_evals_exception': 0, 'failed_evals_nan': 0, 'constraint_evals': 0, 'failed_constraint_evals': 0, 'cpu_time': 17.078125, 'data_points': 33, 'valid_data_points': 33, 'evals_per_sec': 0.0003411667465739742}, 'information_criteria': {'AIC': np.float64(-145.19840900093172), 'AICc': np.float64(-152.9761867787095), 'BIC': np.float64(-137.71587119359933), 'CIC1': np.float64(-147.43848855088513), 'CIC2': np.float64(844.8015909990683), 'CIC3': np.float64(-31.039681800186344)}}, {'structural_variant':     base  term1
+r1     1      0
+r2     0      0
+r3     0      0
+r4     1      0, 'reaction_schemes': {'r1': 'S = P', 'r2': 'S = X', 'r3': 'P = X', 'r4': 'S + P = X'}, 'fit_setup':           lower      upper     start affected
+name                                         
+(r1).k_f    0.1       10.0  0.126152       []
+(r1).k_r    0.1       10.0  0.320244       []
+(r4).k_f  1e-06  1000000.0  0.100000       []
+(r4).k_r  1e-06  1000000.0  0.100000       [], 'fit_algorithm': 'Particle Swarm', 'fit_algorithm_settings': {'method': {'Iteration Limit': 1000, 'Swarm Size': 50, 'Std. Deviation': 1e-06}}, 'estimated_parameters':           lower      upper           sol affected
+name                                             
+(r1).k_f    0.1       10.0      0.300813       []
+(r1).k_r    0.1       10.0      0.298281       []
+(r4).k_f  1e-06  1000000.0  52719.649393       []
+(r4).k_r  1e-06  1000000.0  51751.113103       [], 'fit_statistics': {'obj': 0.29925057968915914, 'rms': 0.09522709375235587, 'sd': 0.1015824074656765, 'f_evals': 50058, 'failed_evals_exception': 0, 'failed_evals_nan': 0, 'constraint_evals': 0, 'failed_constraint_evals': 0, 'cpu_time': 12.15625, 'data_points': 33, 'valid_data_points': 33, 'evals_per_sec': 0.00024284330176994686}, 'information_criteria': {'AIC': np.float64(-145.198391442788), 'AICc': np.float64(-152.97616922056577), 'BIC': np.float64(-137.7158536354556), 'CIC1': np.float64(-147.43847187064858), 'CIC2': np.float64(844.801608557212), 'CIC3': np.float64(-31.0396782885576)}}, {'structural_variant':     base  term1
+r1     1      0
+r2     0      0
+r3     0      0
+r4     1      0, 'reaction_schemes': {'r1': 'S = P', 'r2': 'S = X', 'r3': 'P = X', 'r4': 'S + P = X'}, 'fit_setup':           lower      upper     start affected
+name                                         
+(r1).k_f    0.1       10.0  0.126152       []
+(r1).k_r    0.1       10.0  0.320244       []
+(r4).k_f  1e-06  1000000.0  0.100000       []
+(r4).k_r  1e-06  1000000.0  0.100000       [], 'fit_algorithm': 'Particle Swarm', 'fit_algorithm_settings': {'method': {'Iteration Limit': 1000, 'Swarm Size': 50, 'Std. Deviation': 1e-06}}, 'estimated_parameters':           lower      upper            sol affected
+name                                              
+(r1).k_f    0.1       10.0       0.300827       []
+(r1).k_r    0.1       10.0       0.298293       []
+(r4).k_f  1e-06  1000000.0  896436.996724       []
+(r4).k_r  1e-06  1000000.0  879977.824767       [], 'fit_statistics': {'obj': 0.2992507921752751, 'rms': 0.09522712756086464, 'sd': 0.10158244353051454, 'f_evals': 50058, 'failed_evals_exception': 0, 'failed_evals_nan': 0, 'constraint_evals': 0, 'failed_constraint_evals': 0, 'cpu_time': 9.765625, 'data_points': 33, 'valid_data_points': 33, 'evals_per_sec': 0.00019508620000799074}, 'information_criteria': {'AIC': np.float64(-145.19836801078884), 'AICc': np.float64(-152.9761457885666), 'BIC': np.float64(-137.71583020345645), 'CIC1': np.float64(-147.4384496102494), 'CIC2': np.float64(844.8016319892112), 'CIC3': np.float64(-31.03967360215777)}}, {'structural_variant':     base  term1
+r1     1      0
+r2     0      0
+r3     0      0
+r4     1      0, 'reaction_schemes': {'r1': 'S = P', 'r2': 'S = X', 'r3': 'P = X', 'r4': 'S + P = X'}, 'fit_setup':           lower      upper     start affected
+name                                         
+(r1).k_f    0.1       10.0  0.126152       []
+(r1).k_r    0.1       10.0  0.320244       []
+(r4).k_f  1e-06  1000000.0  0.100000       []
+(r4).k_r  1e-06  1000000.0  0.100000       [], 'fit_algorithm': 'Particle Swarm', 'fit_algorithm_settings': {'method': {'Iteration Limit': 1000, 'Swarm Size': 50, 'Std. Deviation': 1e-06}}, 'estimated_parameters':           lower      upper         start affected
+name                                             
+(r1).k_f    0.1       10.0      0.300779       []
+(r1).k_r    0.1       10.0      0.298230       []
+(r4).k_f  1e-06  1000000.0  26585.060921       []
+(r4).k_r  1e-06  1000000.0  26097.519419       [], 'fit_statistics': {'obj': 0.2992501540810116, 'rms': 0.09522702603412217, 'sd': 0.10158233522802923, 'f_evals': 50058, 'failed_evals_exception': 0, 'failed_evals_nan': 0, 'constraint_evals': 0, 'failed_constraint_evals': 0, 'cpu_time': 6.6875, 'data_points': 33, 'valid_data_points': 33, 'evals_per_sec': 0.00013359502976547204}, 'information_criteria': {'AIC': np.float64(-145.1984383769623), 'AICc': np.float64(-152.97621615474006), 'BIC': np.float64(-137.7159005696299), 'CIC1': np.float64(-147.43851645811418), 'CIC2': np.float64(844.8015616230377), 'CIC3': np.float64(-31.039687675392457)}}], 'fitness': {'min_AIC': np.float64(-145.1984383769623), 'min_AICc': np.float64(-152.97621615474006), 'min_BIC': np.float64(-137.7159005696299), 'min_CIC1': np.float64(-147.43851645811418), 'min_CIC2': np.float64(844.8015616230377), 'min_CIC3': np.float64(-31.039687675392457), 'term_coords': [(3, 0)], 'term_index': [1]}}, {'variant':     base  term1
+r1     1      6
+r2     0      0
+r3     0      0
+r4     1      0, 'estimation_results': [{'structural_variant':     base  term1
+r1     1      6
+r2     0      0
+r3     0      0
+r4     1      0, 'reaction_schemes': {'r1': 'S = P; X', 'r2': 'S = X', 'r3': 'P = X', 'r4': 'S + P = X'}, 'fit_setup':            lower      upper         start affected
+name                                              
+(r1).k_f     0.1       10.0      0.300779       []
+(r1).k_r     0.1       10.0      0.298230       []
+(r1).ki_X   0.01    10000.0  10000.000000       []
+(r4).k_f   1e-06  1000000.0  26585.060921       []
+(r4).k_r   1e-06  1000000.0  26097.519419       [], 'fit_algorithm': 'Particle Swarm', 'fit_algorithm_settings': {'method': {'Iteration Limit': 1000, 'Swarm Size': 50, 'Std. Deviation': 1e-06}}, 'estimated_parameters':            lower      upper            sol affected
+name                                               
+(r1).k_f     0.1       10.0       0.530164       []
+(r1).k_r     0.1       10.0       0.516193       []
+(r1).ki_X   0.01    10000.0       2.628559       []
+(r4).k_f   1e-06  1000000.0  247382.103045       []
+(r4).k_r   1e-06  1000000.0  243923.478732       [], 'fit_statistics': {'obj': 0.27639373636521364, 'rms': 0.0915181280875152, 'sd': 0.09935393736629768, 'f_evals': 50059, 'failed_evals_exception': 0, 'failed_evals_nan': 0, 'constraint_evals': 0, 'failed_constraint_evals': 0, 'cpu_time': 16.71875, 'data_points': 33, 'valid_data_points': 33, 'evals_per_sec': 0.0003339809025350087}, 'information_criteria': {'AIC': np.float64(-145.82040153983667), 'AICc': np.float64(-154.58963230906744), 'BIC': np.float64(-136.84135617103777), 'CIC1': np.float64(-148.35117744744647), 'CIC2': np.float64(1042.1795984601633), 'CIC3': np.float64(-26.303400256639446)}}, {'structural_variant':     base  term1
+r1     1      6
+r2     0      0
+r3     0      0
+r4     1      0, 'reaction_schemes': {'r1': 'S = P; X', 'r2': 'S = X', 'r3': 'P = X', 'r4': 'S + P = X'}, 'fit_setup':            lower      upper         start affected
+name                                              
+(r1).k_f     0.1       10.0      0.300779       []
+(r1).k_r     0.1       10.0      0.298230       []
+(r1).ki_X   0.01    10000.0  10000.000000       []
+(r4).k_f   1e-06  1000000.0  26585.060921       []
+(r4).k_r   1e-06  1000000.0  26097.519419       [], 'fit_algorithm': 'Particle Swarm', 'fit_algorithm_settings': {'method': {'Iteration Limit': 1000, 'Swarm Size': 50, 'Std. Deviation': 1e-06}}, 'estimated_parameters':            lower      upper           sol affected
+name                                              
+(r1).k_f     0.1       10.0      0.569621       []
+(r1).k_r     0.1       10.0      0.554378       []
+(r1).ki_X   0.01    10000.0      2.251048       []
+(r4).k_f   1e-06  1000000.0  33448.658515       []
+(r4).k_r   1e-06  1000000.0  33019.117102       [], 'fit_statistics': {'obj': 0.27604520994978327, 'rms': 0.09146040871390552, 'sd': 0.09929127604279514, 'f_evals': 50059, 'failed_evals_exception': 0, 'failed_evals_nan': 0, 'constraint_evals': 0, 'failed_constraint_evals': 0, 'cpu_time': 16.90625, 'data_points': 33, 'valid_data_points': 33, 'evals_per_sec': 0.00033772648275035456}, 'information_criteria': {'AIC': np.float64(-145.86204007134077), 'AICc': np.float64(-154.63127084057155), 'BIC': np.float64(-136.88299470254188), 'CIC1': np.float64(-148.39031766706032), 'CIC2': np.float64(1042.1379599286593), 'CIC3': np.float64(-26.31034001189013)}}, {'structural_variant':     base  term1
+r1     1      6
+r2     0      0
+r3     0      0
+r4     1      0, 'reaction_schemes': {'r1': 'S = P; X', 'r2': 'S = X', 'r3': 'P = X', 'r4': 'S + P = X'}, 'fit_setup':            lower      upper         start affected
+name                                              
+(r1).k_f     0.1       10.0      0.300779       []
+(r1).k_r     0.1       10.0      0.298230       []
+(r1).ki_X   0.01    10000.0  10000.000000       []
+(r4).k_f   1e-06  1000000.0  26585.060921       []
+(r4).k_r   1e-06  1000000.0  26097.519419       [], 'fit_algorithm': 'Particle Swarm', 'fit_algorithm_settings': {'method': {'Iteration Limit': 1000, 'Swarm Size': 50, 'Std. Deviation': 1e-06}}, 'estimated_parameters':            lower      upper           sol affected
+name                                              
+(r1).k_f     0.1       10.0      0.300836       []
+(r1).k_r     0.1       10.0      0.298286       []
+(r1).ki_X   0.01    10000.0  10000.000000       []
+(r4).k_f   1e-06  1000000.0  26581.399174       []
+(r4).k_r   1e-06  1000000.0  26098.370122       [], 'fit_statistics': {'obj': 0.2992296105578083, 'rms': 0.09522375731033313, 'sd': 0.10337684366257276, 'f_evals': 50059, 'failed_evals_exception': 0, 'failed_evals_nan': 0, 'constraint_evals': 0, 'failed_constraint_evals': 0, 'cpu_time': 15.609375, 'data_points': 33, 'valid_data_points': 33, 'evals_per_sec': 0.0003118195529275455}, 'information_criteria': {'AIC': np.float64(-143.20070390474126), 'AICc': np.float64(-151.96993467397203), 'BIC': np.float64(-134.22165853594237), 'CIC1': np.float64(-145.88866167045677), 'CIC2': np.float64(1044.7992960952588), 'CIC3': np.float64(-25.866783984123543)}}, {'structural_variant':     base  term1
+r1     1      6
+r2     0      0
+r3     0      0
+r4     1      0, 'reaction_schemes': {'r1': 'S = P; X', 'r2': 'S = X', 'r3': 'P = X', 'r4': 'S + P = X'}, 'fit_setup':            lower      upper         start affected
+name                                              
+(r1).k_f     0.1       10.0      0.300779       []
+(r1).k_r     0.1       10.0      0.298230       []
+(r1).ki_X   0.01    10000.0  10000.000000       []
+(r4).k_f   1e-06  1000000.0  26585.060921       []
+(r4).k_r   1e-06  1000000.0  26097.519419       [], 'fit_algorithm': 'Particle Swarm', 'fit_algorithm_settings': {'method': {'Iteration Limit': 1000, 'Swarm Size': 50, 'Std. Deviation': 1e-06}}, 'estimated_parameters':            lower      upper          start affected
+name                                               
+(r1).k_f     0.1       10.0       0.587504       []
+(r1).k_r     0.1       10.0       0.571325       []
+(r1).ki_X   0.01    10000.0       2.108961       []
+(r4).k_f   1e-06  1000000.0  166594.126253       []
+(r4).k_r   1e-06  1000000.0  164550.470028       [], 'fit_statistics': {'obj': 0.275963676631837, 'rms': 0.09144690074305532, 'sd': 0.09927661151547316, 'f_evals': 50059, 'failed_evals_exception': 0, 'failed_evals_nan': 0, 'constraint_evals': 0, 'failed_constraint_evals': 0, 'cpu_time': 17.1875, 'data_points': 33, 'valid_data_points': 33, 'evals_per_sec': 0.00034334485307337343}, 'information_criteria': {'AIC': np.float64(-145.87178846335834), 'AICc': np.float64(-154.64101923258912), 'BIC': np.float64(-136.89274309455945), 'CIC1': np.float64(-148.39948115555683), 'CIC2': np.float64(1042.1282115366416), 'CIC3': np.float64(-26.311964743893057)}}, {'structural_variant':     base  term1
+r1     1      6
+r2     0      0
+r3     0      0
+r4     1      0, 'reaction_schemes': {'r1': 'S = P; X', 'r2': 'S = X', 'r3': 'P = X', 'r4': 'S + P = X'}, 'fit_setup':            lower      upper         start affected
+name                                              
+(r1).k_f     0.1       10.0      0.300779       []
+(r1).k_r     0.1       10.0      0.298230       []
+(r1).ki_X   0.01    10000.0  10000.000000       []
+(r4).k_f   1e-06  1000000.0  26585.060921       []
+(r4).k_r   1e-06  1000000.0  26097.519419       [], 'fit_algorithm': 'Particle Swarm', 'fit_algorithm_settings': {'method': {'Iteration Limit': 1000, 'Swarm Size': 50, 'Std. Deviation': 1e-06}}, 'estimated_parameters':            lower      upper           sol affected
+name                                              
+(r1).k_f     0.1       10.0      0.588472       []
+(r1).k_r     0.1       10.0      0.573169       []
+(r1).ki_X   0.01    10000.0      2.105049       []
+(r4).k_f   1e-06  1000000.0  26333.178326       []
+(r4).k_r   1e-06  1000000.0  26062.113421       [], 'fit_statistics': {'obj': 0.27598869837873624, 'rms': 0.09145104641426874, 'sd': 0.09928111214028582, 'f_evals': 50059, 'failed_evals_exception': 0, 'failed_evals_nan': 0, 'constraint_evals': 0, 'failed_constraint_evals': 0, 'cpu_time': 17.140625, 'data_points': 33, 'valid_data_points': 33, 'evals_per_sec': 0.00034240845801953695}, 'information_criteria': {'AIC': np.float64(-145.86879647460853), 'AICc': np.float64(-154.6380272438393), 'BIC': np.float64(-136.88975110580964), 'CIC1': np.float64(-148.39666868613202), 'CIC2': np.float64(1042.1312035253914), 'CIC3': np.float64(-26.31146607910142)}}], 'fitness': {'min_AIC': np.float64(-145.87178846335834), 'min_AICc': np.float64(-154.64101923258912), 'min_BIC': np.float64(-136.89274309455945), 'min_CIC1': np.float64(-148.39948115555683), 'min_CIC2': np.float64(1042.1282115366416), 'min_CIC3': np.float64(-26.311964743893057), 'term_coords': [(0, 1)], 'term_index': [6]}}, {'variant':     base  term1
+r1     1      6
+r2     0      0
+r3     1      0
+r4     1      0, 'estimation_results': [{'structural_variant':     base  term1
+r1     1      6
+r2     0      0
+r3     1      0
+r4     1      0, 'reaction_schemes': {'r1': 'S = P; X', 'r2': 'S = X', 'r3': 'P = X', 'r4': 'S + P = X'}, 'fit_setup':            lower      upper          start affected
+name                                               
+(r1).k_f     0.1       10.0       0.587504       []
+(r1).k_r     0.1       10.0       0.571325       []
+(r1).ki_X   0.01    10000.0       2.108961       []
+(r3).k_f   1e-06  1000000.0       0.100000       []
+(r3).k_r   1e-06  1000000.0       0.100000       []
+(r4).k_f   1e-06  1000000.0  166594.126253       []
+(r4).k_r   1e-06  1000000.0  164550.470028       [], 'fit_algorithm': 'Particle Swarm', 'fit_algorithm_settings': {'method': {'Iteration Limit': 1000, 'Swarm Size': 50, 'Std. Deviation': 1e-06}}, 'estimated_parameters':            lower      upper            sol affected
+name                                               
+(r1).k_f     0.1       10.0       0.646334       []
+(r1).k_r     0.1       10.0       0.587020       []
+(r1).ki_X   0.01    10000.0       1.577837       []
+(r3).k_f   1e-06  1000000.0       0.204263       []
+(r3).k_r   1e-06  1000000.0       0.099241       []
+(r4).k_f   1e-06  1000000.0  163768.659338       []
+(r4).k_r   1e-06  1000000.0  160816.218685       [], 'fit_statistics': {'obj': 0.24453120590170818, 'rms': 0.08608156912182773, 'sd': 0.09697961837847646, 'f_evals': 50061, 'failed_evals_exception': 1, 'failed_evals_nan': 0, 'constraint_evals': 0, 'failed_constraint_evals': 0, 'cpu_time': 15.9375, 'data_points': 33, 'valid_data_points': 33, 'evals_per_sec': 0.00031836159884940374}, 'information_criteria': {'AIC': np.float64(-145.86235696987626), 'AICc': np.float64(-155.86235696987626), 'BIC': np.float64(-133.89029647814442), 'CIC1': np.float64(-148.91336841228616), 'CIC2': np.float64(1438.1376430301239), 'CIC3': np.float64(-20.232794621234532)}}, {'structural_variant':     base  term1
+r1     1      6
+r2     0      0
+r3     1      0
+r4     1      0, 'reaction_schemes': {'r1': 'S = P; X', 'r2': 'S = X', 'r3': 'P = X', 'r4': 'S + P = X'}, 'fit_setup':            lower      upper          start affected
+name                                               
+(r1).k_f     0.1       10.0       0.587504       []
+(r1).k_r     0.1       10.0       0.571325       []
+(r1).ki_X   0.01    10000.0       2.108961       []
+(r3).k_f   1e-06  1000000.0       0.100000       []
+(r3).k_r   1e-06  1000000.0       0.100000       []
+(r4).k_f   1e-06  1000000.0  166594.126253       []
+(r4).k_r   1e-06  1000000.0  164550.470028       [], 'fit_algorithm': 'Particle Swarm', 'fit_algorithm_settings': {'method': {'Iteration Limit': 1000, 'Swarm Size': 50, 'Std. Deviation': 1e-06}}, 'estimated_parameters':            lower      upper            sol affected
+name                                               
+(r1).k_f     0.1       10.0       0.661013       []
+(r1).k_r     0.1       10.0       0.599647       []
+(r1).ki_X   0.01    10000.0       1.515066       []
+(r3).k_f   1e-06  1000000.0       0.204586       []
+(r3).k_r   1e-06  1000000.0       0.099419       []
+(r4).k_f   1e-06  1000000.0  167813.039922       []
+(r4).k_r   1e-06  1000000.0  164736.852654       [], 'fit_statistics': {'obj': 0.24448756121440626, 'rms': 0.08607388672642899, 'sd': 0.09697096338087823, 'f_evals': 50061, 'failed_evals_exception': 0, 'failed_evals_nan': 0, 'constraint_evals': 0, 'failed_constraint_evals': 0, 'cpu_time': 14.984375, 'data_points': 33, 'valid_data_points': 33, 'evals_per_sec': 0.00029932232676135114}, 'information_criteria': {'AIC': np.float64(-145.86824743781588), 'AICc': np.float64(-155.86824743781588), 'BIC': np.float64(-133.89618694608404), 'CIC1': np.float64(-148.91878764279062), 'CIC2': np.float64(1438.1317525621841), 'CIC3': np.float64(-20.233530929726985)}}, {'structural_variant':     base  term1
+r1     1      6
+r2     0      0
+r3     1      0
+r4     1      0, 'reaction_schemes': {'r1': 'S = P; X', 'r2': 'S = X', 'r3': 'P = X', 'r4': 'S + P = X'}, 'fit_setup':            lower      upper          start affected
+name                                               
+(r1).k_f     0.1       10.0       0.587504       []
+(r1).k_r     0.1       10.0       0.571325       []
+(r1).ki_X   0.01    10000.0       2.108961       []
+(r3).k_f   1e-06  1000000.0       0.100000       []
+(r3).k_r   1e-06  1000000.0       0.100000       []
+(r4).k_f   1e-06  1000000.0  166594.126253       []
+(r4).k_r   1e-06  1000000.0  164550.470028       [], 'fit_algorithm': 'Particle Swarm', 'fit_algorithm_settings': {'method': {'Iteration Limit': 1000, 'Swarm Size': 50, 'Std. Deviation': 1e-06}}, 'estimated_parameters':            lower      upper            sol affected
+name                                               
+(r1).k_f     0.1       10.0       0.813762       []
+(r1).k_r     0.1       10.0       0.734118       []
+(r1).ki_X   0.01    10000.0       1.075798       []
+(r3).k_f   1e-06  1000000.0       0.203869       []
+(r3).k_r   1e-06  1000000.0       0.098987       []
+(r4).k_f   1e-06  1000000.0  147869.564446       []
+(r4).k_r   1e-06  1000000.0  145273.802544       [], 'fit_statistics': {'obj': 0.24453263662199234, 'rms': 0.08608182094749235, 'sd': 0.0969799020856289, 'f_evals': 50061, 'failed_evals_exception': 0, 'failed_evals_nan': 0, 'constraint_evals': 0, 'failed_constraint_evals': 0, 'cpu_time': 16.375, 'data_points': 33, 'valid_data_points': 33, 'evals_per_sec': 0.0003271009368570344}, 'information_criteria': {'AIC': np.float64(-145.8621638917328), 'AICc': np.float64(-155.8621638917328), 'BIC': np.float64(-133.89010340000095), 'CIC1': np.float64(-148.91319078039416), 'CIC2': np.float64(1438.1378361082673), 'CIC3': np.float64(-20.2327704864666)}}, {'structural_variant':     base  term1
+r1     1      6
+r2     0      0
+r3     1      0
+r4     1      0, 'reaction_schemes': {'r1': 'S = P; X', 'r2': 'S = X', 'r3': 'P = X', 'r4': 'S + P = X'}, 'fit_setup':            lower      upper          start affected
+name                                               
+(r1).k_f     0.1       10.0       0.587504       []
+(r1).k_r     0.1       10.0       0.571325       []
+(r1).ki_X   0.01    10000.0       2.108961       []
+(r3).k_f   1e-06  1000000.0       0.100000       []
+(r3).k_r   1e-06  1000000.0       0.100000       []
+(r4).k_f   1e-06  1000000.0  166594.126253       []
+(r4).k_r   1e-06  1000000.0  164550.470028       [], 'fit_algorithm': 'Particle Swarm', 'fit_algorithm_settings': {'method': {'Iteration Limit': 1000, 'Swarm Size': 50, 'Std. Deviation': 1e-06}}, 'estimated_parameters':            lower      upper         start affected
+name                                              
+(r1).k_f     0.1       10.0      0.769865       []
+(r1).k_r     0.1       10.0      0.695067       []
+(r1).ki_X   0.01    10000.0      1.172861       []
+(r3).k_f   1e-06  1000000.0      0.205203       []
+(r3).k_r   1e-06  1000000.0      0.099644       []
+(r4).k_f   1e-06  1000000.0  68209.723888       []
+(r4).k_r   1e-06  1000000.0  66997.643056       [], 'fit_statistics': {'obj': 0.24446039886324628, 'rms': 0.08606910522739171, 'sd': 0.09696557653725255, 'f_evals': 50061, 'failed_evals_exception': 0, 'failed_evals_nan': 0, 'constraint_evals': 0, 'failed_constraint_evals': 0, 'cpu_time': 14.921875, 'data_points': 33, 'valid_data_points': 33, 'evals_per_sec': 0.0002980738499031182}, 'information_criteria': {'AIC': np.float64(-145.87191391221558), 'AICc': np.float64(-155.87191391221558), 'BIC': np.float64(-133.89985342048374), 'CIC1': np.float64(-148.92216079923833), 'CIC2': np.float64(1438.1280860877844), 'CIC3': np.float64(-20.233989239026947)}}, {'structural_variant':     base  term1
+r1     1      6
+r2     0      0
+r3     1      0
+r4     1      0, 'reaction_schemes': {'r1': 'S = P; X', 'r2': 'S = X', 'r3': 'P = X', 'r4': 'S + P = X'}, 'fit_setup':            lower      upper          start affected
+name                                               
+(r1).k_f     0.1       10.0       0.587504       []
+(r1).k_r     0.1       10.0       0.571325       []
+(r1).ki_X   0.01    10000.0       2.108961       []
+(r3).k_f   1e-06  1000000.0       0.100000       []
+(r3).k_r   1e-06  1000000.0       0.100000       []
+(r4).k_f   1e-06  1000000.0  166594.126253       []
+(r4).k_r   1e-06  1000000.0  164550.470028       [], 'fit_algorithm': 'Particle Swarm', 'fit_algorithm_settings': {'method': {'Iteration Limit': 1000, 'Swarm Size': 50, 'Std. Deviation': 1e-06}}, 'estimated_parameters':            lower      upper            sol affected
+name                                               
+(r1).k_f     0.1       10.0       0.660695       []
+(r1).k_r     0.1       10.0       0.599492       []
+(r1).ki_X   0.01    10000.0       1.517109       []
+(r3).k_f   1e-06  1000000.0       0.202362       []
+(r3).k_r   1e-06  1000000.0       0.098338       []
+(r4).k_f   1e-06  1000000.0  180815.591253       []
+(r4).k_r   1e-06  1000000.0  177507.956003       [], 'fit_statistics': {'obj': 0.244494597288158, 'rms': 0.08607512527176618, 'sd': 0.09697235872781917, 'f_evals': 50061, 'failed_evals_exception': 0, 'failed_evals_nan': 0, 'constraint_evals': 0, 'failed_constraint_evals': 0, 'cpu_time': 11.9375, 'data_points': 33, 'valid_data_points': 33, 'evals_per_sec': 0.00023845907992249457}, 'information_criteria': {'AIC': np.float64(-145.86729774903978), 'AICc': np.float64(-155.86729774903978), 'BIC': np.float64(-133.89523725730794), 'CIC1': np.float64(-148.9179139291166), 'CIC2': np.float64(1438.1327022509602), 'CIC3': np.float64(-20.233412218629972)}}], 'fitness': {'min_AIC': np.float64(-145.87191391221558), 'min_AICc': np.float64(-155.87191391221558), 'min_BIC': np.float64(-133.89985342048374), 'min_CIC1': np.float64(-148.92216079923833), 'min_CIC2': np.float64(1438.1280860877844), 'min_CIC3': np.float64(-20.233989239026947), 'term_coords': [(2, 0)], 'term_index': [1]}}], 'best_median_rank': [{'variant':     base  term1
+r1     1      6
+r2     0      0
+r3     0      0
+r4     1      0, 'estimation_results': [{'structural_variant':     base  term1
+r1     1      6
+r2     0      0
+r3     0      0
+r4     1      0, 'reaction_schemes': {'r1': 'S = P; X', 'r2': 'S = X', 'r3': 'P = X', 'r4': 'S + P = X'}, 'fit_setup':            lower      upper         start affected
+name                                              
+(r1).k_f     0.1       10.0      0.300779       []
+(r1).k_r     0.1       10.0      0.298230       []
+(r1).ki_X   0.01    10000.0  10000.000000       []
+(r4).k_f   1e-06  1000000.0  26585.060921       []
+(r4).k_r   1e-06  1000000.0  26097.519419       [], 'fit_algorithm': 'Particle Swarm', 'fit_algorithm_settings': {'method': {'Iteration Limit': 1000, 'Swarm Size': 50, 'Std. Deviation': 1e-06}}, 'estimated_parameters':            lower      upper            sol affected
+name                                               
+(r1).k_f     0.1       10.0       0.530164       []
+(r1).k_r     0.1       10.0       0.516193       []
+(r1).ki_X   0.01    10000.0       2.628559       []
+(r4).k_f   1e-06  1000000.0  247382.103045       []
+(r4).k_r   1e-06  1000000.0  243923.478732       [], 'fit_statistics': {'obj': 0.27639373636521364, 'rms': 0.0915181280875152, 'sd': 0.09935393736629768, 'f_evals': 50059, 'failed_evals_exception': 0, 'failed_evals_nan': 0, 'constraint_evals': 0, 'failed_constraint_evals': 0, 'cpu_time': 16.71875, 'data_points': 33, 'valid_data_points': 33, 'evals_per_sec': 0.0003339809025350087}, 'information_criteria': {'AIC': np.float64(-145.82040153983667), 'AICc': np.float64(-154.58963230906744), 'BIC': np.float64(-136.84135617103777), 'CIC1': np.float64(-148.35117744744647), 'CIC2': np.float64(1042.1795984601633), 'CIC3': np.float64(-26.303400256639446)}}, {'structural_variant':     base  term1
+r1     1      6
+r2     0      0
+r3     0      0
+r4     1      0, 'reaction_schemes': {'r1': 'S = P; X', 'r2': 'S = X', 'r3': 'P = X', 'r4': 'S + P = X'}, 'fit_setup':            lower      upper         start affected
+name                                              
+(r1).k_f     0.1       10.0      0.300779       []
+(r1).k_r     0.1       10.0      0.298230       []
+(r1).ki_X   0.01    10000.0  10000.000000       []
+(r4).k_f   1e-06  1000000.0  26585.060921       []
+(r4).k_r   1e-06  1000000.0  26097.519419       [], 'fit_algorithm': 'Particle Swarm', 'fit_algorithm_settings': {'method': {'Iteration Limit': 1000, 'Swarm Size': 50, 'Std. Deviation': 1e-06}}, 'estimated_parameters':            lower      upper           sol affected
+name                                              
+(r1).k_f     0.1       10.0      0.569621       []
+(r1).k_r     0.1       10.0      0.554378       []
+(r1).ki_X   0.01    10000.0      2.251048       []
+(r4).k_f   1e-06  1000000.0  33448.658515       []
+(r4).k_r   1e-06  1000000.0  33019.117102       [], 'fit_statistics': {'obj': 0.27604520994978327, 'rms': 0.09146040871390552, 'sd': 0.09929127604279514, 'f_evals': 50059, 'failed_evals_exception': 0, 'failed_evals_nan': 0, 'constraint_evals': 0, 'failed_constraint_evals': 0, 'cpu_time': 16.90625, 'data_points': 33, 'valid_data_points': 33, 'evals_per_sec': 0.00033772648275035456}, 'information_criteria': {'AIC': np.float64(-145.86204007134077), 'AICc': np.float64(-154.63127084057155), 'BIC': np.float64(-136.88299470254188), 'CIC1': np.float64(-148.39031766706032), 'CIC2': np.float64(1042.1379599286593), 'CIC3': np.float64(-26.31034001189013)}}, {'structural_variant':     base  term1
+r1     1      6
+r2     0      0
+r3     0      0
+r4     1      0, 'reaction_schemes': {'r1': 'S = P; X', 'r2': 'S = X', 'r3': 'P = X', 'r4': 'S + P = X'}, 'fit_setup':            lower      upper         start affected
+name                                              
+(r1).k_f     0.1       10.0      0.300779       []
+(r1).k_r     0.1       10.0      0.298230       []
+(r1).ki_X   0.01    10000.0  10000.000000       []
+(r4).k_f   1e-06  1000000.0  26585.060921       []
+(r4).k_r   1e-06  1000000.0  26097.519419       [], 'fit_algorithm': 'Particle Swarm', 'fit_algorithm_settings': {'method': {'Iteration Limit': 1000, 'Swarm Size': 50, 'Std. Deviation': 1e-06}}, 'estimated_parameters':            lower      upper           sol affected
+name                                              
+(r1).k_f     0.1       10.0      0.300836       []
+(r1).k_r     0.1       10.0      0.298286       []
+(r1).ki_X   0.01    10000.0  10000.000000       []
+(r4).k_f   1e-06  1000000.0  26581.399174       []
+(r4).k_r   1e-06  1000000.0  26098.370122       [], 'fit_statistics': {'obj': 0.2992296105578083, 'rms': 0.09522375731033313, 'sd': 0.10337684366257276, 'f_evals': 50059, 'failed_evals_exception': 0, 'failed_evals_nan': 0, 'constraint_evals': 0, 'failed_constraint_evals': 0, 'cpu_time': 15.609375, 'data_points': 33, 'valid_data_points': 33, 'evals_per_sec': 0.0003118195529275455}, 'information_criteria': {'AIC': np.float64(-143.20070390474126), 'AICc': np.float64(-151.96993467397203), 'BIC': np.float64(-134.22165853594237), 'CIC1': np.float64(-145.88866167045677), 'CIC2': np.float64(1044.7992960952588), 'CIC3': np.float64(-25.866783984123543)}}, {'structural_variant':     base  term1
+r1     1      6
+r2     0      0
+r3     0      0
+r4     1      0, 'reaction_schemes': {'r1': 'S = P; X', 'r2': 'S = X', 'r3': 'P = X', 'r4': 'S + P = X'}, 'fit_setup':            lower      upper         start affected
+name                                              
+(r1).k_f     0.1       10.0      0.300779       []
+(r1).k_r     0.1       10.0      0.298230       []
+(r1).ki_X   0.01    10000.0  10000.000000       []
+(r4).k_f   1e-06  1000000.0  26585.060921       []
+(r4).k_r   1e-06  1000000.0  26097.519419       [], 'fit_algorithm': 'Particle Swarm', 'fit_algorithm_settings': {'method': {'Iteration Limit': 1000, 'Swarm Size': 50, 'Std. Deviation': 1e-06}}, 'estimated_parameters':            lower      upper          start affected
+name                                               
+(r1).k_f     0.1       10.0       0.587504       []
+(r1).k_r     0.1       10.0       0.571325       []
+(r1).ki_X   0.01    10000.0       2.108961       []
+(r4).k_f   1e-06  1000000.0  166594.126253       []
+(r4).k_r   1e-06  1000000.0  164550.470028       [], 'fit_statistics': {'obj': 0.275963676631837, 'rms': 0.09144690074305532, 'sd': 0.09927661151547316, 'f_evals': 50059, 'failed_evals_exception': 0, 'failed_evals_nan': 0, 'constraint_evals': 0, 'failed_constraint_evals': 0, 'cpu_time': 17.1875, 'data_points': 33, 'valid_data_points': 33, 'evals_per_sec': 0.00034334485307337343}, 'information_criteria': {'AIC': np.float64(-145.87178846335834), 'AICc': np.float64(-154.64101923258912), 'BIC': np.float64(-136.89274309455945), 'CIC1': np.float64(-148.39948115555683), 'CIC2': np.float64(1042.1282115366416), 'CIC3': np.float64(-26.311964743893057)}}, {'structural_variant':     base  term1
+r1     1      6
+r2     0      0
+r3     0      0
+r4     1      0, 'reaction_schemes': {'r1': 'S = P; X', 'r2': 'S = X', 'r3': 'P = X', 'r4': 'S + P = X'}, 'fit_setup':            lower      upper         start affected
+name                                              
+(r1).k_f     0.1       10.0      0.300779       []
+(r1).k_r     0.1       10.0      0.298230       []
+(r1).ki_X   0.01    10000.0  10000.000000       []
+(r4).k_f   1e-06  1000000.0  26585.060921       []
+(r4).k_r   1e-06  1000000.0  26097.519419       [], 'fit_algorithm': 'Particle Swarm', 'fit_algorithm_settings': {'method': {'Iteration Limit': 1000, 'Swarm Size': 50, 'Std. Deviation': 1e-06}}, 'estimated_parameters':            lower      upper           sol affected
+name                                              
+(r1).k_f     0.1       10.0      0.588472       []
+(r1).k_r     0.1       10.0      0.573169       []
+(r1).ki_X   0.01    10000.0      2.105049       []
+(r4).k_f   1e-06  1000000.0  26333.178326       []
+(r4).k_r   1e-06  1000000.0  26062.113421       [], 'fit_statistics': {'obj': 0.27598869837873624, 'rms': 0.09145104641426874, 'sd': 0.09928111214028582, 'f_evals': 50059, 'failed_evals_exception': 0, 'failed_evals_nan': 0, 'constraint_evals': 0, 'failed_constraint_evals': 0, 'cpu_time': 17.140625, 'data_points': 33, 'valid_data_points': 33, 'evals_per_sec': 0.00034240845801953695}, 'information_criteria': {'AIC': np.float64(-145.86879647460853), 'AICc': np.float64(-154.6380272438393), 'BIC': np.float64(-136.88975110580964), 'CIC1': np.float64(-148.39666868613202), 'CIC2': np.float64(1042.1312035253914), 'CIC3': np.float64(-26.31146607910142)}}], 'fitness': {'min_AIC': np.float64(-145.87178846335834), 'min_AICc': np.float64(-154.64101923258912), 'min_BIC': np.float64(-136.89274309455945), 'min_CIC1': np.float64(-148.39948115555683), 'min_CIC2': np.float64(1042.1282115366416), 'min_CIC3': np.float64(-26.311964743893057), 'term_coords': [(0, 1)], 'term_index': [6]}}, {'variant':     base  term1
+r1     1      6
+r2     0      0
+r3     1      0
+r4     1      0, 'estimation_results': [{'structural_variant':     base  term1
+r1     1      6
+r2     0      0
+r3     1      0
+r4     1      0, 'reaction_schemes': {'r1': 'S = P; X', 'r2': 'S = X', 'r3': 'P = X', 'r4': 'S + P = X'}, 'fit_setup':            lower      upper          start affected
+name                                               
+(r1).k_f     0.1       10.0       0.587504       []
+(r1).k_r     0.1       10.0       0.571325       []
+(r1).ki_X   0.01    10000.0       2.108961       []
+(r3).k_f   1e-06  1000000.0       0.100000       []
+(r3).k_r   1e-06  1000000.0       0.100000       []
+(r4).k_f   1e-06  1000000.0  166594.126253       []
+(r4).k_r   1e-06  1000000.0  164550.470028       [], 'fit_algorithm': 'Particle Swarm', 'fit_algorithm_settings': {'method': {'Iteration Limit': 1000, 'Swarm Size': 50, 'Std. Deviation': 1e-06}}, 'estimated_parameters':            lower      upper            sol affected
+name                                               
+(r1).k_f     0.1       10.0       0.646334       []
+(r1).k_r     0.1       10.0       0.587020       []
+(r1).ki_X   0.01    10000.0       1.577837       []
+(r3).k_f   1e-06  1000000.0       0.204263       []
+(r3).k_r   1e-06  1000000.0       0.099241       []
+(r4).k_f   1e-06  1000000.0  163768.659338       []
+(r4).k_r   1e-06  1000000.0  160816.218685       [], 'fit_statistics': {'obj': 0.24453120590170818, 'rms': 0.08608156912182773, 'sd': 0.09697961837847646, 'f_evals': 50061, 'failed_evals_exception': 1, 'failed_evals_nan': 0, 'constraint_evals': 0, 'failed_constraint_evals': 0, 'cpu_time': 15.9375, 'data_points': 33, 'valid_data_points': 33, 'evals_per_sec': 0.00031836159884940374}, 'information_criteria': {'AIC': np.float64(-145.86235696987626), 'AICc': np.float64(-155.86235696987626), 'BIC': np.float64(-133.89029647814442), 'CIC1': np.float64(-148.91336841228616), 'CIC2': np.float64(1438.1376430301239), 'CIC3': np.float64(-20.232794621234532)}}, {'structural_variant':     base  term1
+r1     1      6
+r2     0      0
+r3     1      0
+r4     1      0, 'reaction_schemes': {'r1': 'S = P; X', 'r2': 'S = X', 'r3': 'P = X', 'r4': 'S + P = X'}, 'fit_setup':            lower      upper          start affected
+name                                               
+(r1).k_f     0.1       10.0       0.587504       []
+(r1).k_r     0.1       10.0       0.571325       []
+(r1).ki_X   0.01    10000.0       2.108961       []
+(r3).k_f   1e-06  1000000.0       0.100000       []
+(r3).k_r   1e-06  1000000.0       0.100000       []
+(r4).k_f   1e-06  1000000.0  166594.126253       []
+(r4).k_r   1e-06  1000000.0  164550.470028       [], 'fit_algorithm': 'Particle Swarm', 'fit_algorithm_settings': {'method': {'Iteration Limit': 1000, 'Swarm Size': 50, 'Std. Deviation': 1e-06}}, 'estimated_parameters':            lower      upper            sol affected
+name                                               
+(r1).k_f     0.1       10.0       0.661013       []
+(r1).k_r     0.1       10.0       0.599647       []
+(r1).ki_X   0.01    10000.0       1.515066       []
+(r3).k_f   1e-06  1000000.0       0.204586       []
+(r3).k_r   1e-06  1000000.0       0.099419       []
+(r4).k_f   1e-06  1000000.0  167813.039922       []
+(r4).k_r   1e-06  1000000.0  164736.852654       [], 'fit_statistics': {'obj': 0.24448756121440626, 'rms': 0.08607388672642899, 'sd': 0.09697096338087823, 'f_evals': 50061, 'failed_evals_exception': 0, 'failed_evals_nan': 0, 'constraint_evals': 0, 'failed_constraint_evals': 0, 'cpu_time': 14.984375, 'data_points': 33, 'valid_data_points': 33, 'evals_per_sec': 0.00029932232676135114}, 'information_criteria': {'AIC': np.float64(-145.86824743781588), 'AICc': np.float64(-155.86824743781588), 'BIC': np.float64(-133.89618694608404), 'CIC1': np.float64(-148.91878764279062), 'CIC2': np.float64(1438.1317525621841), 'CIC3': np.float64(-20.233530929726985)}}, {'structural_variant':     base  term1
+r1     1      6
+r2     0      0
+r3     1      0
+r4     1      0, 'reaction_schemes': {'r1': 'S = P; X', 'r2': 'S = X', 'r3': 'P = X', 'r4': 'S + P = X'}, 'fit_setup':            lower      upper          start affected
+name                                               
+(r1).k_f     0.1       10.0       0.587504       []
+(r1).k_r     0.1       10.0       0.571325       []
+(r1).ki_X   0.01    10000.0       2.108961       []
+(r3).k_f   1e-06  1000000.0       0.100000       []
+(r3).k_r   1e-06  1000000.0       0.100000       []
+(r4).k_f   1e-06  1000000.0  166594.126253       []
+(r4).k_r   1e-06  1000000.0  164550.470028       [], 'fit_algorithm': 'Particle Swarm', 'fit_algorithm_settings': {'method': {'Iteration Limit': 1000, 'Swarm Size': 50, 'Std. Deviation': 1e-06}}, 'estimated_parameters':            lower      upper            sol affected
+name                                               
+(r1).k_f     0.1       10.0       0.813762       []
+(r1).k_r     0.1       10.0       0.734118       []
+(r1).ki_X   0.01    10000.0       1.075798       []
+(r3).k_f   1e-06  1000000.0       0.203869       []
+(r3).k_r   1e-06  1000000.0       0.098987       []
+(r4).k_f   1e-06  1000000.0  147869.564446       []
+(r4).k_r   1e-06  1000000.0  145273.802544       [], 'fit_statistics': {'obj': 0.24453263662199234, 'rms': 0.08608182094749235, 'sd': 0.0969799020856289, 'f_evals': 50061, 'failed_evals_exception': 0, 'failed_evals_nan': 0, 'constraint_evals': 0, 'failed_constraint_evals': 0, 'cpu_time': 16.375, 'data_points': 33, 'valid_data_points': 33, 'evals_per_sec': 0.0003271009368570344}, 'information_criteria': {'AIC': np.float64(-145.8621638917328), 'AICc': np.float64(-155.8621638917328), 'BIC': np.float64(-133.89010340000095), 'CIC1': np.float64(-148.91319078039416), 'CIC2': np.float64(1438.1378361082673), 'CIC3': np.float64(-20.2327704864666)}}, {'structural_variant':     base  term1
+r1     1      6
+r2     0      0
+r3     1      0
+r4     1      0, 'reaction_schemes': {'r1': 'S = P; X', 'r2': 'S = X', 'r3': 'P = X', 'r4': 'S + P = X'}, 'fit_setup':            lower      upper          start affected
+name                                               
+(r1).k_f     0.1       10.0       0.587504       []
+(r1).k_r     0.1       10.0       0.571325       []
+(r1).ki_X   0.01    10000.0       2.108961       []
+(r3).k_f   1e-06  1000000.0       0.100000       []
+(r3).k_r   1e-06  1000000.0       0.100000       []
+(r4).k_f   1e-06  1000000.0  166594.126253       []
+(r4).k_r   1e-06  1000000.0  164550.470028       [], 'fit_algorithm': 'Particle Swarm', 'fit_algorithm_settings': {'method': {'Iteration Limit': 1000, 'Swarm Size': 50, 'Std. Deviation': 1e-06}}, 'estimated_parameters':            lower      upper         start affected
+name                                              
+(r1).k_f     0.1       10.0      0.769865       []
+(r1).k_r     0.1       10.0      0.695067       []
+(r1).ki_X   0.01    10000.0      1.172861       []
+(r3).k_f   1e-06  1000000.0      0.205203       []
+(r3).k_r   1e-06  1000000.0      0.099644       []
+(r4).k_f   1e-06  1000000.0  68209.723888       []
+(r4).k_r   1e-06  1000000.0  66997.643056       [], 'fit_statistics': {'obj': 0.24446039886324628, 'rms': 0.08606910522739171, 'sd': 0.09696557653725255, 'f_evals': 50061, 'failed_evals_exception': 0, 'failed_evals_nan': 0, 'constraint_evals': 0, 'failed_constraint_evals': 0, 'cpu_time': 14.921875, 'data_points': 33, 'valid_data_points': 33, 'evals_per_sec': 0.0002980738499031182}, 'information_criteria': {'AIC': np.float64(-145.87191391221558), 'AICc': np.float64(-155.87191391221558), 'BIC': np.float64(-133.89985342048374), 'CIC1': np.float64(-148.92216079923833), 'CIC2': np.float64(1438.1280860877844), 'CIC3': np.float64(-20.233989239026947)}}, {'structural_variant':     base  term1
+r1     1      6
+r2     0      0
+r3     1      0
+r4     1      0, 'reaction_schemes': {'r1': 'S = P; X', 'r2': 'S = X', 'r3': 'P = X', 'r4': 'S + P = X'}, 'fit_setup':            lower      upper          start affected
+name                                               
+(r1).k_f     0.1       10.0       0.587504       []
+(r1).k_r     0.1       10.0       0.571325       []
+(r1).ki_X   0.01    10000.0       2.108961       []
+(r3).k_f   1e-06  1000000.0       0.100000       []
+(r3).k_r   1e-06  1000000.0       0.100000       []
+(r4).k_f   1e-06  1000000.0  166594.126253       []
+(r4).k_r   1e-06  1000000.0  164550.470028       [], 'fit_algorithm': 'Particle Swarm', 'fit_algorithm_settings': {'method': {'Iteration Limit': 1000, 'Swarm Size': 50, 'Std. Deviation': 1e-06}}, 'estimated_parameters':            lower      upper            sol affected
+name                                               
+(r1).k_f     0.1       10.0       0.660695       []
+(r1).k_r     0.1       10.0       0.599492       []
+(r1).ki_X   0.01    10000.0       1.517109       []
+(r3).k_f   1e-06  1000000.0       0.202362       []
+(r3).k_r   1e-06  1000000.0       0.098338       []
+(r4).k_f   1e-06  1000000.0  180815.591253       []
+(r4).k_r   1e-06  1000000.0  177507.956003       [], 'fit_statistics': {'obj': 0.244494597288158, 'rms': 0.08607512527176618, 'sd': 0.09697235872781917, 'f_evals': 50061, 'failed_evals_exception': 0, 'failed_evals_nan': 0, 'constraint_evals': 0, 'failed_constraint_evals': 0, 'cpu_time': 11.9375, 'data_points': 33, 'valid_data_points': 33, 'evals_per_sec': 0.00023845907992249457}, 'information_criteria': {'AIC': np.float64(-145.86729774903978), 'AICc': np.float64(-155.86729774903978), 'BIC': np.float64(-133.89523725730794), 'CIC1': np.float64(-148.9179139291166), 'CIC2': np.float64(1438.1327022509602), 'CIC3': np.float64(-20.233412218629972)}}], 'fitness': {'min_AIC': np.float64(-145.87191391221558), 'min_AICc': np.float64(-155.87191391221558), 'min_BIC': np.float64(-133.89985342048374), 'min_CIC1': np.float64(-148.92216079923833), 'min_CIC2': np.float64(1438.1280860877844), 'min_CIC3': np.float64(-20.233989239026947), 'term_coords': [(2, 0)], 'term_index': [1]}}]}
+
+best_ranking_model_variant_idx:
+1
+
+best_ranking_model_variant_structure:
+    base  term1
+r1     1      0
+r2     0      0
+r3     0      0
+r4     1      0
+
+full_param_ensemble:
+    Unnamed: 0  (r1).k_f  (r1).k_r  (r4).k_f  (r4).k_r       obj
+0            0  0.300520  0.296255  1.813085  1.761322  0.295219
+1            1  0.300519  0.296256  1.814300  1.762520  0.295219
+2            2  0.300518  0.296274  1.827689  1.775692  0.295219
+3            3  0.300515  0.296270  1.835113  1.782962  0.295219
+4            4  0.300520  0.296257  1.814311  1.762527  0.295219
+5            5  0.300512  0.296265  1.835099  1.782937  0.295219
+6            6  0.300515  0.296270  1.835114  1.782962  0.295219
+7            7  0.300521  0.296278  1.835145  1.783004  0.295219
+8            8  0.300517  0.296252  1.814286  1.762505  0.295219
+9            9  0.300519  0.296276  1.835133  1.782991  0.295219
+10          10  0.300515  0.296233  1.819629  1.767633  0.295219
+11          11  0.300521  0.296256  1.813088  1.761325  0.295219
+12          12  0.300520  0.296276  1.835147  1.782992  0.295219
+13          13  0.300501  0.296233  1.814184  1.762406  0.295219
+14          14  0.300517  0.296264  1.827672  1.775642  0.295219
+15          15  0.300520  0.296255  1.813086  1.761323  0.295219
+16          16  0.300512  0.296247  1.813804  1.762063  0.295219
+17          17  0.300514  0.296244  1.814290  1.762478  0.295219
+18          18  0.300517  0.296267  1.829329  1.777289  0.295219
+19          19  0.300524  0.296284  1.827753  1.775728  0.295219
+
+best_param_set:
+    Unnamed: 0  (r1).k_f  (r1).k_r  (r4).k_f  (r4).k_r       obj
+14          14  0.300517  0.296264  1.827672  1.775642  0.295219

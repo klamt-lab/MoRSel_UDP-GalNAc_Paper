@@ -280,7 +280,7 @@ def toymodel_data():
                             'r3': 'P = X',
                             'r4': 'S + P = X'}
 
-    # collect known literature values of kinetic parameters; not all parameters have to appear here - some may not be used depending on the kinetics that are selected according to the structural variant matrix; kcat [1/h]; Km, ki, ka [mM]; K_eq [-]; these literature values are used in the eval_struct_var function to automatically define the fit items (if no fit_params_info dictionary with a specific parameter estimation setup is provided instead)
+    # collect known literature values of kinetic parameters; not all parameters have to appear here - some may not be used depending on the kinetics that are selected according to the structural variant matrix; kcat [1/h]; Km, ki, ka [mM]; K_eq [-]
     param_dict = {'r1': {},
                   'r2': {},
                   'r3': {},
@@ -304,13 +304,13 @@ def toymodel_term_libs():
 # create repositories of reaction specific base kinetics and general regulatory terms that can be indexed according to the integers contained in the structural variant vector (0: no base kinetics <-> reaction turned off, 1: first base kinetics in sublist, and so on); all kinetics come with dictionaries mapping variable names to their usage, i.e., 'parameter', 'substrate', 'product', or 'modifier'
     base_kinetics = {
         'r1': [{'equation': '0', 'mapping': {}}, #0
-                         {'equation': '(k_MAforward*S-k_MAreverse*P)', 'mapping': {'k_MAforward': 'parameter', 'k_MAreverse': 'parameter', 'S': 'substrate', 'P': 'product'}}], #1
+                         {'equation': '(k_f*S-k_r*P)', 'mapping': {'k_f': 'parameter', 'k_r': 'parameter', 'S': 'substrate', 'P': 'product'}}], #1
         'r2': [{'equation': '0', 'mapping': {}}, #0
-                         {'equation': '(k_MAforward*S-k_MAreverse*X)', 'mapping': {'k_MAforward': 'parameter', 'k_MAreverse': 'parameter', 'S': 'substrate', 'X': 'product'}}], #1
+                         {'equation': '(k_f*S-k_r*X)', 'mapping': {'k_f': 'parameter', 'k_r': 'parameter', 'S': 'substrate', 'X': 'product'}}], #1
         'r3': [{'equation': '0', 'mapping': {}}, #0
-                         {'equation': '(k_MAforward*P-k_MAreverse*X)', 'mapping': {'k_MAforward': 'parameter', 'k_MAreverse': 'parameter', 'P': 'substrate', 'X': 'product'}}], #1
+                         {'equation': '(k_f*P-k_r*X)', 'mapping': {'k_f': 'parameter', 'k_r': 'parameter', 'P': 'substrate', 'X': 'product'}}], #1
         'r4': [{'equation': '0', 'mapping': {}}, #0
-                         {'equation': '(k_MAforward*S*P-k_MAreverse*X)', 'mapping': {'k_MAforward': 'parameter', 'k_MAreverse': 'parameter', 'S': 'substrate', 'P': 'substrate', 'X': 'product'}}], #1
+                         {'equation': '(k_f*S*P-k_r*X)', 'mapping': {'k_f': 'parameter', 'k_r': 'parameter', 'S': 'substrate', 'P': 'substrate', 'X': 'product'}}] #1
     }
 # regarding the regulation terms: all model species are represented as possible activators and possible inhibitors; the inhibition equation is based on Liebermeister and Klipp, 2006 <https://pmc.ncbi.nlm.nih.gov/articles/PMC1781438/> while the activation equation is a custom approach with a redefined ka parameter (custom ka = 1/(normal ka); this way the activation can be completely turned off by setting ka to 0)
     regulatory_terms = [
@@ -334,7 +334,7 @@ def toymodel_term_libs():
          'mapping': {'ka_X': 'parameter', 'X': 'modifier'}},
         {'name': 'X_Inhib',  # 6
          'equation': '((ki_X)/(ki_X+X))',
-         'mapping': {'ki_X': 'parameter', 'X': 'modifier'}},
+         'mapping': {'ki_X': 'parameter', 'X': 'modifier'}}
     ]
 
     return base_kinetics, regulatory_terms
@@ -1019,7 +1019,7 @@ def eval_struct_var(struct_var, exp_data_file_names, exp_data_dataframes, fit_pa
                        'upper': 1e+03}
             fit_items.append(subdict)
         elif 'k_MA' in reaction_params_unique.index[i]:
-            # k is the forward rate constant of an irreversible mass action rate law ("k*[A]*[B]")
+            # k_MA is the forward rate constant of an irreversible mass action rate law ("k*[A]*[B]")
             subdict = {'name': reaction_params_unique.index[i],
                        'start': 1,
                        'lower': 1e-06,
