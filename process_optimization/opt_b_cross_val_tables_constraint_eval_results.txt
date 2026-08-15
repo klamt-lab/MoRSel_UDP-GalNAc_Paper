@@ -1,0 +1,6 @@
+{   'ImpExtSearch_v23b_rep2_MV5_b': {   'OP05withS': {   'titers': {   'num_constraint_violated': 1766,
+                                                                       'percentage_constraint_violated': 70.64,
+                                                                       'total_table_size': 2500},
+                                                         'yields': {   'num_constraint_violated': 1808,
+                                                                       'percentage_constraint_violated': 72.32,
+                                                                       'total_table_size': 2500}}}}
