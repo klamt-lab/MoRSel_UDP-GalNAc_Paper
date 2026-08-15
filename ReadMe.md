@@ -360,7 +360,7 @@ For a full run of *MoRSel* two Python script files were executed:
 
 The selected best-ranking model variant across all five main runs (excluding the additional test runs) is called "rep2_MV5", referring to the second repetition of *MoRSel* (third run in total) where model variant number 5 was chosen in the final selection step. Figures comparing the fit quality of the initial core model (dashed lines) to the fit quality of the selected model variant (solid lines) were created with [this script](/morsel/plot_NegCtrl_and_rep2MV5_time_courses.py) for all experimental data sets ([example](/morsel/v23bNegCtrldashed_v23IESrep2MV5solid_DataUDP-GalNAc36_50_Comparison_merged.png)).
 
-A [Copasi model file of the selected best-ranking model variant]((/morsel/rep2/ImpExtSearch_v23b_rep2_MV5.cps) for subsequent process optimization was created by [this script](/morsel/rep2/create_Copasi_model_file.py).
+A [Copasi model file of the selected best-ranking model variant](/morsel/rep2/ImpExtSearch_v23b_rep2_MV5.cps) for subsequent process optimization was created by [this script](/morsel/rep2/create_Copasi_model_file.py).
 
 ## Process Optimization of the UDP-GalNAc Process
 The selected model variant was used to optimize the cell-free production of UDP-GalNAc compared to the baseline behavior ([experiment 36, 50mM](/process_optimization/exp_val_data/UDP-GalNAc36_50_with_initConcColumns.txt)). Two different optimization scenarios were calculated:
